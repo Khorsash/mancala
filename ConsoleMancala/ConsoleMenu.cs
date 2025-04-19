@@ -1,9 +1,105 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 
 namespace ConsoleMenu
 {
+    abstract class SettingOption
+    {
+        public abstract void NextValue();
+        public abstract void PreviousValue();
+    }
+
+    class StringOption: SettingOption
+    {
+        private string[] Options;
+        private int ValueIndex;
+        public StringOption(string[] options, int valueIndex)
+        {
+            Options = options;
+            ValueIndex = valueIndex;
+        }
+        public override void NextValue()
+        {
+            ValueIndex = (ValueIndex+1) % Options.Length;
+        }
+        public override void PreviousValue()
+        {
+            ValueIndex = ValueIndex == 0 ? Options.Length-1 : ValueIndex-1;
+        }
+        public override string ToString()
+        {
+            return Options[ValueIndex];
+        }
+    }
+    class BoolOption: SettingOption
+    {
+        private bool Value;
+        public BoolOption(bool value)
+        {
+            Value = value;
+        }
+        public override void NextValue()
+        {
+            Value = !Value;
+        }
+        public override void PreviousValue()
+        {
+            Value = !Value;
+        }
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+    }
+    class IntOption: SettingOption
+    {
+        private int Value;
+        private int Step;
+
+        public IntOption(int value, int step)
+        {
+            Value = value;
+            Step = step;
+        }
+        public override void NextValue()
+        {
+            Value += Step;
+        }
+        public override void PreviousValue()
+        {
+            Value -= Step;
+        }
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+    }
+    class DoubleOption: SettingOption
+    {
+        private double Value;
+        private double Step;
+
+        public DoubleOption(double value, double step)
+        {
+            Value = value;
+            Step = step;
+        }
+        public override void NextValue()
+        {
+            Value += Step;
+        }
+        public override void PreviousValue()
+        {
+            Value -= Step;
+        }
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+    }
     class Menu
     {
         public static T[][] Paginate<T>(IEnumerable<T> array, int pageSize)
@@ -79,7 +175,7 @@ namespace ConsoleMenu
         ///         - Arrow Up to go up<br/>
         ///         - Arrow Down to go down<br/>
         ///         - Arrow Right to go to next page<br/>
-        ///         - Arrow Left to go to previos page<br/>
+        ///         - Arrow Left to go to previous page<br/>
         ///         - Escape to return default value<br/>
         ///         - Enter to confirm choice
         /// 
@@ -87,7 +183,7 @@ namespace ConsoleMenu
         /// <returns>T of choice</returns>
         public static T MenuShow<T>(T[][] pages, int pageIndex = 0, string title = "", ConsoleColor selectionColor = ConsoleColor.Green)
         {
-            BlockConsole();
+            // BlockConsole();
             int choice = 0;
             
             int YOffset = title != "" ? title.Split("\n").Length : 0;
@@ -150,6 +246,65 @@ namespace ConsoleMenu
                         Console.Clear();
                         T? x = default;
                         return x == null ? pages[0][0] : x;
+                }
+            }
+        }
+        public static void ShowSettings(Dictionary<string, SettingOption> settings, int selected, ConsoleColor selectionColor=ConsoleColor.Green)
+        {
+            string[] settingNames = settings.Keys.ToArray();
+            ConsoleColor valueSelectedColor = ConsoleColor.White;
+            for(int i=0; i<settingNames.Length; i++)
+            {
+                if(i==selected) Console.ForegroundColor = selectionColor;
+                else Console.ForegroundColor = default;
+                Console.Write(settingNames[i]+": < ");
+                if(i==selected) Console.ForegroundColor = valueSelectedColor;
+                Console.Write(settings[settingNames[i]]);
+                Console.WriteLine(" >");
+            }
+
+        }
+        public static void ChangeSettings(Dictionary<string, SettingOption> settings, ConsoleColor selectionColor = ConsoleColor.Green)
+        {
+            string[] settingNames = settings.Keys.ToArray();
+            int currentSetting = 0;
+            Console.WriteLine("\x1b[3J");
+            Console.Clear();
+            ShowSettings(settings, currentSetting, selectionColor);
+            bool notConfirmed = true;
+            while(notConfirmed)
+            {
+                ConsoleKeyInfo key = Console.ReadKey();
+                switch (key.Key)
+                {
+                    case ConsoleKey.DownArrow:
+                        currentSetting = (currentSetting+1) % settingNames.Length;
+                        Console.WriteLine("\x1b[3J");
+                        Console.Clear();
+                        ShowSettings(settings, currentSetting, selectionColor);
+                        break;
+                    case ConsoleKey.UpArrow:
+                        currentSetting = currentSetting == 0 ? settingNames.Length-1 : currentSetting-1;
+                        Console.WriteLine("\x1b[3J");
+                        Console.Clear();
+                        ShowSettings(settings, currentSetting, selectionColor);
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        settings[settingNames[currentSetting]].PreviousValue();
+                        Console.WriteLine("\x1b[3J");
+                        Console.Clear();
+                        ShowSettings(settings, currentSetting, selectionColor);
+                        break;
+                    case ConsoleKey.RightArrow:
+                        settings[settingNames[currentSetting]].NextValue();
+                        Console.WriteLine("\x1b[3J");
+                        Console.Clear();
+                        ShowSettings(settings, currentSetting, selectionColor);
+                        break;
+                    case ConsoleKey.Escape:
+                        Console.WriteLine("\x1b[3J");
+                        Console.Clear();
+                        return;
                 }
             }
         }
