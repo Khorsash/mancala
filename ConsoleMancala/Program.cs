@@ -103,7 +103,7 @@ namespace ConsoleMancala
             return num<10 ? "0"+Convert.ToString(num) : Convert.ToString(num%100);
         }
 
-        static void ShowBoard(int[] board, int showFromPerspective=0, int selected=-1)
+        static void ShowBoard(int[] board, int showFromPerspective=0, int selected=-1, bool debug=false)
         {
             int pitsCount = (board.Length-3)/2;
             int turn = showFromPerspective != 0 ? showFromPerspective : board[board.Length-1];
@@ -269,21 +269,27 @@ namespace ConsoleMancala
             Console.WriteLine();
 
             // uncomment to debug 
-            // Console.Write("{ ");
-            // for(int i=0; i<board.Length; i++) Console.Write(Convert.ToString(board[i])+", ");
-            // Console.Write(" }");
-            // Console.WriteLine();
-            // Console.Write("selected: ");
-            // Console.WriteLine(selected);
-            // Console.Write("choice index given to function: ");
-            // Console.WriteLine(turn == 1 ? selected : selected-7);
-            // Console.Write("endIndex: ");
-            // Console.WriteLine(turnEnd);
+            
+            if(debug)
+            {
+                Console.WriteLine();
+                Console.Write("{ ");
+                for(int i=0; i<board.Length; i++) Console.Write(Convert.ToString(board[i])+", ");
+                Console.Write(" }");
+                Console.WriteLine();
+                Console.Write("selected: ");
+                Console.WriteLine(selected);
+                Console.Write("choice index given to function: ");
+                Console.WriteLine(turn == 1 ? selected : selected-7);
+                Console.Write("endIndex: ");
+                Console.WriteLine(turnEnd);
+            }
         }
 
-        static void HotSitGame() 
+        static void HotSitGame(Dictionary<string, SettingOption> settings) 
         {
             int[] board = new int[15] {4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0, 1};
+            bool debug = settings["Show debug"].ToString() == "True";
             List<int[]> history = new List<int[]>();
             history.Add(board);
             List<int> movesHistory = new List<int>();
@@ -303,7 +309,7 @@ namespace ConsoleMancala
                 ConsoleKeyInfo keyInfo;
                 keyNotSelected = true;
                 i = turn == 1 ? 3 : 10;
-                ShowBoard(board, 0, i);
+                ShowBoard(board, 0, i, debug);
                 while(keyNotSelected)
                 {
                     keyInfo = Console.ReadKey();
@@ -312,12 +318,12 @@ namespace ConsoleMancala
                         case ConsoleKey.RightArrow: case ConsoleKey.D:
                             ClearConsole();
                             i = turn == 1 ? (i == 5 ? 0 : i+1) : (i == 12 ? 7 : i+1);
-                            ShowBoard(board, 0, i);
+                            ShowBoard(board, 0, i, debug);
                             break;
                         case ConsoleKey.LeftArrow: case ConsoleKey.A:
                             ClearConsole();
                             i = turn == 1 ? (i == 0 ? 5 : i-1) : (i == 7 ? 12 : i-1);
-                            ShowBoard(board, 0, i);
+                            ShowBoard(board, 0, i, debug);
                             break;
                         case ConsoleKey.Enter:
                             if(board[i] != 0) keyNotSelected = false;
@@ -335,7 +341,7 @@ namespace ConsoleMancala
                 }
             }
             ClearConsole();
-            ShowBoard(board);
+            ShowBoard(board, 0, 0, debug);
             if (winner == 1 || winner == 2) 
             {Console.WriteLine("Player "+Convert.ToString(winner)+" won!\nSwitch between moves with Right and Left arrow keys\nPress Escape to exit to menu");}
             else
@@ -354,7 +360,8 @@ namespace ConsoleMancala
                             boardStateIndex = history.Count-1;
                             ClearConsole();
                             ShowBoard(history[boardStateIndex], 0);
-                            Console.WriteLine("Player "+Convert.ToString(winner)+" won!");
+                            if (winner == 1 || winner == 2) Console.WriteLine("Player "+Convert.ToString(winner)+" won!");
+                            else Console.WriteLine("Draw.");
                             break;
                         }
                         if(boardStateIndex == history.Count-1)
@@ -362,14 +369,16 @@ namespace ConsoleMancala
                             boardStateIndex = 0;
                             ClearConsole();
                             ShowBoard(history[boardStateIndex], 0, movesHistory[boardStateIndex]);
-                            Console.WriteLine("Player "+Convert.ToString(winner)+" won!");
+                            if (winner == 1 || winner == 2) Console.WriteLine("Player "+Convert.ToString(winner)+" won!");
+                            else Console.WriteLine("Draw.");
                             break;
                         }
 
                         boardStateIndex++;
                         ClearConsole();
                         ShowBoard(history[boardStateIndex], 0, movesHistory[boardStateIndex]);
-                        Console.WriteLine("Player "+Convert.ToString(winner)+" won!");
+                        if (winner == 1 || winner == 2) Console.WriteLine("Player "+Convert.ToString(winner)+" won!");
+                        else Console.WriteLine("Draw.");
 
                         break;
                     case ConsoleKey.LeftArrow:
@@ -378,14 +387,16 @@ namespace ConsoleMancala
                             boardStateIndex = history.Count-1;
                             ClearConsole();
                             ShowBoard(history[boardStateIndex], 0);
-                            Console.WriteLine("Player "+Convert.ToString(winner)+" won!");
+                            if (winner == 1 || winner == 2) Console.WriteLine("Player "+Convert.ToString(winner)+" won!");
+                            else Console.WriteLine("Draw.");
                             break;
                         }
 
                         boardStateIndex--;
                         ClearConsole();
                         ShowBoard(history[boardStateIndex], 0, movesHistory[boardStateIndex]);
-                        Console.WriteLine("Player "+Convert.ToString(winner)+" won!");
+                        if (winner == 1 || winner == 2) Console.WriteLine("Player "+Convert.ToString(winner)+" won!");
+                        else Console.WriteLine("Draw.");
 
                         break;
                     case ConsoleKey.Escape:
@@ -402,6 +413,10 @@ namespace ConsoleMancala
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             string[] MenuOptions = new string[4] {"New Hot seat game", "New online game", "Settings", "Exit"};
+
+            Dictionary<string, SettingOption> settings = new Dictionary<string, SettingOption>();
+            settings["Show debug"] = new BoolOption(false);
+
             bool Running = true;
             while(Running)
             {
@@ -409,7 +424,10 @@ namespace ConsoleMancala
                 switch(choice)
                 {
                     case "New Hot seat game":
-                        HotSitGame();
+                        HotSitGame(settings);
+                        break;
+                    case "Settings":
+                        Menu.ChangeSettings(settings);
                         break;
                     case "Exit":
                         Running = false;
