@@ -73,6 +73,18 @@ namespace ConsoleMenu
             Console.SetCursorPosition(Convert.ToString(page[0]).Length + 2, YOffset);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
+        /// <summary>
+        ///     Shows menu in console with paginated options<br/><br/>
+        ///     Controls are:<br/>
+        ///         - Arrow Up to go up<br/>
+        ///         - Arrow Down to go down<br/>
+        ///         - Arrow Right to go to next page<br/>
+        ///         - Arrow Left to go to previos page<br/>
+        ///         - Escape to return default value<br/>
+        ///         - Enter to confirm choice
+        /// 
+        /// </summary> 
+        /// <returns>T of choice</returns>
         public static T MenuShow<T>(T[][] pages, int pageIndex = 0, string title = "", ConsoleColor selectionColor = ConsoleColor.Green)
         {
             BlockConsole();
