@@ -50,7 +50,7 @@ namespace ConsoleMancala
                 piecesCount--;
             }
 
-            if((turn == 1 ? (currentIndex<6) : (currentIndex>6&&currentIndex<13)) && finalBoard[currentIndex] == 1)
+            if((turn == 1 ? (currentIndex<6) : (currentIndex>6&&currentIndex<13)) && finalBoard[currentIndex] == 1 && finalBoard[12-currentIndex] != 0)
             {
                 finalBoard[ownBar] += finalBoard[12-currentIndex] + 1;
                 finalBoard[12-currentIndex] = 0;
@@ -330,12 +330,16 @@ namespace ConsoleMancala
                 if(board.AsSpan(0, 6).ToArray().Sum()+board.AsSpan(7, 6).ToArray().Sum() == 0)
                 {
                     winner = board[6] > board[13] ? 1 : 2;
+                    if (board[6] == board[13]) winner = 3;
                     gameRunning = false;
                 }
             }
             ClearConsole();
             ShowBoard(board);
-            Console.WriteLine("Player "+Convert.ToString(winner)+" won!\nSwitch between moves with Right and Left arrow keys\nPress Escape to exit to menu");
+            if (winner == 1 || winner == 2) 
+            {Console.WriteLine("Player "+Convert.ToString(winner)+" won!\nSwitch between moves with Right and Left arrow keys\nPress Escape to exit to menu");}
+            else
+            {Console.WriteLine("Draw.\nSwitch between moves with Right and Left arrow keys\nPress Escape to exit to menu");}
             ConsoleKeyInfo keyInfo2;
             bool analyzingParty = true;
             int boardStateIndex = history.Count-1;
