@@ -415,19 +415,25 @@ namespace ConsoleMancala
             string[] MenuOptions = new string[4] {"New Hot seat game", "New online game", "Settings", "Exit"};
 
             Dictionary<string, SettingOption> settings = new Dictionary<string, SettingOption>();
+            int[] menuSelectColors = new int[15];
+            for(int i=1; i<16; i++) menuSelectColors[i-1] = i;
             settings["Show debug"] = new BoolOption(false);
+            settings["Menu select color"] = new ColorOption(menuSelectColors, 13);
+            settings["Settings select color"] = new ColorOption(menuSelectColors, 13);
 
             bool Running = true;
             while(Running)
             {
-                string choice = Menu.MenuShow(Menu.Paginate(MenuOptions, 4), 0, "", ConsoleColor.Yellow);
+                string choice = Menu.MenuShow(Menu.Paginate(MenuOptions, 4), 0, "", 
+                                            (ConsoleColor)((ColorOption)settings["Menu select color"]).GetColor());
                 switch(choice)
                 {
                     case "New Hot seat game":
                         HotSitGame(settings);
                         break;
                     case "Settings":
-                        Menu.ChangeSettings(settings);
+                        Menu.ChangeSettings(settings, 
+                                            (ConsoleColor)((ColorOption)settings["Settings select color"]).GetColor());
                         break;
                     case "Exit":
                         Running = false;

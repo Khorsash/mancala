@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
@@ -98,6 +99,68 @@ namespace ConsoleMenu
         public override string ToString()
         {
             return Value.ToString();
+        }
+    }
+    class ColorOption: SettingOption
+    {
+        private int[] Colors;
+        private int ColorIndex;
+        public ColorOption(int[] colors, int valueIndex)
+        {
+            Colors = colors;
+            ColorIndex = valueIndex;
+        }
+        public override void NextValue()
+        {
+            ColorIndex = (ColorIndex+1) % Colors.Length;
+        }
+        public override void PreviousValue()
+        {
+            ColorIndex = ColorIndex == 0 ? Colors.Length-1 : ColorIndex-1;
+        }
+        public override string ToString()
+        {
+            switch(Colors[ColorIndex])
+            {
+                case 0:
+                    return "black";
+                case 1:
+                    return "dark blue";
+                case 2:
+                    return "dark green";
+                case 3:
+                    return "dark cyan";
+                case 4:
+                    return "dark red";
+                case 5:
+                    return "dark magenta";
+                case 6:
+                    return "dark yellow";
+                case 7:
+                    return "gray";
+                case 8:
+                    return "dark gray";
+                case 9:
+                    return "blue";
+                case 10:
+                    return "green";
+                case 11:
+                    return "cyan";
+                case 12:
+                    return "red";
+                case 13:
+                    return "magenta";
+                case 14:
+                    return "yellow";
+                case 15:
+                    return "white";
+                default:
+                    return "";   
+            }
+        }
+        public int GetColor()
+        {
+            return Colors[ColorIndex];
         }
     }
     class Menu
@@ -257,8 +320,9 @@ namespace ConsoleMenu
             {
                 if(i==selected) Console.ForegroundColor = selectionColor;
                 else Console.ForegroundColor = default;
-                Console.Write(settingNames[i]+": < ");
+                Console.Write(settingNames[i]+": ");
                 if(i==selected) Console.ForegroundColor = valueSelectedColor;
+                Console.Write("< ");
                 Console.Write(settings[settingNames[i]]);
                 Console.WriteLine(" >");
             }
