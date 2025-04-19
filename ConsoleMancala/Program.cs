@@ -120,12 +120,10 @@ namespace ConsoleMancala
                 {
                     if(selected != -1 && i == turnEnd)
                     {
-                        // Console.ForegroundColor = endIndexColor;
                         if(i == selected) Console.ForegroundColor = selectColor; 
                         Console.Write(" [");
                         Console.ForegroundColor = endIndexColor;
                         Console.Write(board[i]>0?IntTo2DigitString(board[i]):"  ");
-                        // Console.ForegroundColor = endIndexColor;
                         Console.ForegroundColor = consoleColor;
                         if(i == selected) Console.ForegroundColor = selectColor;
                         Console.Write("]");
@@ -156,12 +154,10 @@ namespace ConsoleMancala
                 {
                     if(selected != -1 && i == turnEnd)
                     {
-                        // Console.ForegroundColor = endIndexColor;
                         if(i == selected) Console.ForegroundColor = selectColor; 
                         Console.Write(" [");
                         Console.ForegroundColor = endIndexColor;
                         Console.Write(board[i]>0?IntTo2DigitString(board[i]):"  ");
-                        // Console.ForegroundColor = endIndexColor;
                         Console.ForegroundColor = consoleColor;
                         if(i == selected) Console.ForegroundColor = selectColor;
                         Console.Write("]");
@@ -209,12 +205,10 @@ namespace ConsoleMancala
                 {
                     if(selected != -1 && i == turnEnd)
                     {
-                        // Console.ForegroundColor = endIndexColor;
                         if(i == selected) Console.ForegroundColor = selectColor; 
                         Console.Write(" [");
                         Console.ForegroundColor = endIndexColor;
                         Console.Write(board[i]>0?IntTo2DigitString(board[i]):"  ");
-                        // Console.ForegroundColor = endIndexColor;
                         Console.ForegroundColor = consoleColor;
                         if(i == selected) Console.ForegroundColor = selectColor;
                         Console.Write("]");
@@ -244,12 +238,10 @@ namespace ConsoleMancala
                 {
                     if(selected != -1 && i == turnEnd)
                     {
-                        // Console.ForegroundColor = endIndexColor;
                         if(i == selected) Console.ForegroundColor = selectColor; 
                         Console.Write(" [");
                         Console.ForegroundColor = endIndexColor;
                         Console.Write(board[i]>0?IntTo2DigitString(board[i]):"  ");
-                        // Console.ForegroundColor = endIndexColor;
                         Console.ForegroundColor = consoleColor;
                         if(i == selected) Console.ForegroundColor = selectColor;
                         Console.Write("]");
@@ -277,16 +269,16 @@ namespace ConsoleMancala
             Console.WriteLine();
 
             // uncomment to debug 
-            Console.Write("{ ");
-            for(int i=0; i<board.Length; i++) Console.Write(Convert.ToString(board[i])+", ");
-            Console.Write(" }");
-            Console.WriteLine();
-            Console.Write("selected: ");
-            Console.WriteLine(selected);
-            Console.Write("choice index given to function: ");
-            Console.WriteLine(turn == 1 ? selected : selected-7);
-            Console.Write("endIndex: ");
-            Console.WriteLine(turnEnd);
+            // Console.Write("{ ");
+            // for(int i=0; i<board.Length; i++) Console.Write(Convert.ToString(board[i])+", ");
+            // Console.Write(" }");
+            // Console.WriteLine();
+            // Console.Write("selected: ");
+            // Console.WriteLine(selected);
+            // Console.Write("choice index given to function: ");
+            // Console.WriteLine(turn == 1 ? selected : selected-7);
+            // Console.Write("endIndex: ");
+            // Console.WriteLine(turnEnd);
         }
 
         static void HotSitGame() 
@@ -409,7 +401,7 @@ namespace ConsoleMancala
             bool Running = true;
             while(Running)
             {
-                string choice = Menu.MenuShow(Menu.Paginate(MenuOptions, 2), 0, "", ConsoleColor.Yellow);
+                string choice = Menu.MenuShow(Menu.Paginate(MenuOptions, 4), 0, "", ConsoleColor.Yellow);
                 switch(choice)
                 {
                     case "New Hot seat game":
