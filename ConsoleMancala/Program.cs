@@ -40,16 +40,10 @@ namespace ConsoleMancala
                 finalBoard[ownBar] += finalBoard[12-currentIndex] + 1;
                 finalBoard[12-currentIndex] = 0;
                 finalBoard[currentIndex] = 0;
-                Console.WriteLine();
-                Console.WriteLine("Ends in own empty");
-                Console.WriteLine();
             }
 
             if((turn == 1 ? (currentIndex>6&&currentIndex<13) : (currentIndex<6)) && finalBoard[currentIndex] % 2 == 0)
             {
-                Console.WriteLine();
-                Console.WriteLine("Even count");
-                Console.WriteLine();
                 finalBoard[ownBar] += finalBoard[currentIndex];
                 finalBoard[currentIndex] = 0;
             }
