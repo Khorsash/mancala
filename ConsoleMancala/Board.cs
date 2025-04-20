@@ -33,7 +33,7 @@ namespace ConsoleMancala
         {
             int pitsCount = (board.Length-3)/2;
             int turn = showFromPerspective != 0 ? showFromPerspective : board[board.Length-1];
-            int turnEnd = selected != -1 ? TurnEndIndex(board, turn == 1 ? selected : selected-7) : -1;
+            int turnEnd = selected != -1 ? TurnEndIndex(board, board[board.Length-1] == 1 ? selected : selected-7) : -1;
             ConsoleColor consoleColor = ConsoleColor.DarkGray;
             Console.Write("|‾‾|");
             ConsoleColor selectColor = ConsoleColor.Green;
@@ -110,7 +110,16 @@ namespace ConsoleMancala
             Console.Write("|‾‾|");
             Console.WriteLine();
             int opponentsBar = turn == 1 ? board[board.Length-2] : board[pitsCount];
-            Console.Write("|"+IntTo2DigitString(opponentsBar)+"| ");
+            if(selected != -1 && (turn == 1 ? 13 : 6) == turnEnd)
+            {
+                Console.Write(" |");
+                Console.ForegroundColor = endIndexColor;
+                Console.Write(IntTo2DigitString(opponentsBar));
+                Console.ForegroundColor = consoleColor;
+                Console.Write("|");
+            }
+            else
+            {Console.Write("|"+IntTo2DigitString(opponentsBar)+"| ");}
             for(int i=0; i<(pitsCount*5)-1; i++) Console.Write("-");
             int ownBar = turn == 1 ? board[pitsCount] : board[board.Length-2];
             if(selected != -1 && (turn == 1 ? 6 : 13) == turnEnd)
