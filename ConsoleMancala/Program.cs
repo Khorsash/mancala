@@ -137,7 +137,7 @@ namespace ConsoleMancala
                 keyInfo2 = Console.ReadKey();
                 switch(keyInfo2.Key)
                 {
-                    case ConsoleKey.RightArrow:
+                    case ConsoleKey.RightArrow: case ConsoleKey.D:
                         if(boardStateIndex == history.Count-2)
                         {
                             boardStateIndex = history.Count-1;
@@ -164,7 +164,7 @@ namespace ConsoleMancala
                         else Console.WriteLine("Draw.");
 
                         break;
-                    case ConsoleKey.LeftArrow:
+                    case ConsoleKey.LeftArrow: case ConsoleKey.A:
                         if(boardStateIndex == 0)
                         {
                             boardStateIndex = history.Count-1;
