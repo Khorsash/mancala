@@ -124,7 +124,7 @@ namespace ConsoleMancala
                 }
             }
             ClearConsole();
-            Board.ShowBoard(board, 0, 0, debug);
+            Board.ShowBoard(board, 0, -1, debug);
             if (winner == 1 || winner == 2) 
             {Console.WriteLine("Player "+Convert.ToString(winner)+" won!\nSwitch between moves with Right and Left arrow keys\nPress Escape to exit to menu");}
             else
