@@ -191,16 +191,6 @@ namespace ConsoleMenu
             }
             return pages;
         }
-        private static void BlockConsole()
-        {
-#pragma warning disable CA1416 // Validate platform compatibility
-            Console.BufferHeight = Console.WindowHeight;
-#pragma warning restore CA1416 // Validate platform compatibility
-#pragma warning disable CA1416 // Validate platform compatibility
-            Console.BufferWidth = Console.WindowWidth;
-#pragma warning restore CA1416 // Validate platform compatibility
-            Console.SetCursorPosition(0, 0);
-        }
         private static void ShowPage<T>(T[] page, string title = "", ConsoleColor selectionColor = ConsoleColor.Green)
         {
             Console.WriteLine("\x1b[3J");
