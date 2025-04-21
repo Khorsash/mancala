@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ConsoleMancala;
 using ConsoleMenu;
@@ -158,22 +159,21 @@ public class WebGameClient
         _connection.On<string>("GameState", (state) =>
         {
             string[] gamestate = state.Split(",");
-            for(int i=0; i<board.Length; i++) board[i] = Convert.ToInt16(gamestate[i]);
-            history.Add(board);
+            int[] bc = new int[board.Length];
+            if(gamestate[gamestate.Length-1] != "")
+            {
+                int previousMove = Convert.ToInt16(gamestate[gamestate.Length-1]);
+                if(movesHistory.Count+1 == history.Count-1) movesHistory.Add(previousMove);
+            }
+            for(int i=0; i<board.Length; i++) bc[i] = Convert.ToInt16(gamestate[i]);
+            history.Add(bc);
+            board = bc.ToArray();
             Console.WriteLine("\x1b[3J");
             Console.Clear();
+            if(debug) {Console.WriteLine("Just GameState");}
             Board.ShowBoard(board, _role, -1, debug);
-            Console.WriteLine("It's Opponent's turn");
-        });
-
-        _connection.On<string>("MadeMove", (move) => 
-        {
-            if(_canMove) movesHistory.Add(Convert.ToInt16(move));
-        });
-
-        _connection.On("CanMove", () =>
-        {
-            _canMove = true;
+            _canMove = board[board.Length-1] == _role;
+            Console.WriteLine(board[board.Length-1] == _role ? "It's Your turn" : "It's Opponent's turn");
         });
 
         _connection.On<string>("GameOver", (msg) =>
@@ -205,13 +205,11 @@ public class WebGameClient
             if (_canMove)
             {
                 turn = board[board.Length-1];
-                Console.WriteLine("\x1b[3J");
-                Console.Clear();
+                if(debug) Console.WriteLine("GameState and CanMove");
                 i = turn == 1 ? 3 : 10;
                 keyNotSelected = true;
                 Board.ShowBoard(board, _role, i, debug);
                 Console.WriteLine("It's Your turn");
-                Console.Beep();
                 while(keyNotSelected)
                 {
                     keyInfo = Console.ReadKey();
@@ -238,7 +236,6 @@ public class WebGameClient
                 }
                 int move = turn == 1 ? i : i-7;
                 await _connection.InvokeAsync("MakeMove", _sessionId, move.ToString());
-                movesHistory.Add(move);
                 _canMove = false;
             }
             else
