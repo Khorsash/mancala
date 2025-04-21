@@ -14,14 +14,12 @@
 
 - To try the game run this in shell:<br/>
 <code style="white-space: pre-wrap; display: inline-block; padding: 0.2em 0.4em; border-radius: 4px;">$ cd ./ConsoleMancala
-$ dotnet run Program.cs
-</code>
+$ dotnet run Program.cs</code>
 - In VSCode you can just run it by clicking Run button in the top
 
 - To build run this in shell:<br/>
 <code style="white-space: pre-wrap; display: inline-block; padding: 0.2em 0.4em; border-radius: 4px;">$ cd ./ConsoleMancala
-$ dotnet build
-</code>
+$ dotnet build</code>
 
 <cite><q>Naming is so good that I'm already not getting it</q></cite><br/>
 \- Khorsash
