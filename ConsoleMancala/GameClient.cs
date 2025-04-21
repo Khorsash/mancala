@@ -163,6 +163,7 @@ public class WebGameClient
             Console.WriteLine("\x1b[3J");
             Console.Clear();
             Board.ShowBoard(board, _role, -1, debug);
+            Console.WriteLine("It's Opponent's turn");
         });
 
         _connection.On<string>("MadeMove", (move) => 
@@ -209,6 +210,8 @@ public class WebGameClient
                 i = turn == 1 ? 3 : 10;
                 keyNotSelected = true;
                 Board.ShowBoard(board, _role, i, debug);
+                Console.WriteLine("It's Your turn");
+                Console.Beep();
                 while(keyNotSelected)
                 {
                     keyInfo = Console.ReadKey();
@@ -219,12 +222,14 @@ public class WebGameClient
                             Console.Clear();
                             i = turn == 1 ? (i == 5 ? 0 : i+1) : (i == 12 ? 7 : i+1);
                             Board.ShowBoard(board, _role, i, debug);
+                            Console.WriteLine("It's Your turn");
                             break;
                         case ConsoleKey.LeftArrow: case ConsoleKey.A:
                             Console.WriteLine("\x1b[3J");
                             Console.Clear();
                             i = turn == 1 ? (i == 0 ? 5 : i-1) : (i == 7 ? 12 : i-1);
                             Board.ShowBoard(board, _role, i, debug);
+                            Console.WriteLine("It's Your turn");
                             break;
                         case ConsoleKey.Enter:
                             if(board[i] != 0) keyNotSelected = false;
