@@ -170,7 +170,6 @@ public class WebGameClient
             board = bc.ToArray();
             Console.WriteLine("\x1b[3J");
             Console.Clear();
-            if(debug) {Console.WriteLine("Just GameState");}
             Board.ShowBoard(board, _role, -1, debug);
             _canMove = board[board.Length-1] == _role;
             Console.WriteLine(board[board.Length-1] == _role ? "It's Your turn" : "It's Opponent's turn");
@@ -205,7 +204,6 @@ public class WebGameClient
             if (_canMove)
             {
                 turn = board[board.Length-1];
-                if(debug) Console.WriteLine("GameState and CanMove");
                 i = turn == 1 ? 3 : 10;
                 keyNotSelected = true;
                 Board.ShowBoard(board, _role, i, debug);
