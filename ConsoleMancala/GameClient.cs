@@ -21,6 +21,14 @@ public class WebGameClient
     private TaskCompletionSource<bool> _gameEnded;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    public WebGameClient()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    {
+        history = new List<int[]>();
+        movesHistory = new List<int>();
+    }
+
     public async Task RunAsync(Dictionary<string, SettingOption> settings)
     {
         _gameEnded = new TaskCompletionSource<bool>();
@@ -78,7 +86,7 @@ public class WebGameClient
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
                         Board.ShowBoard(history[boardStateIndex], _role);
-                        if (_winner == 1 || _winner == 2) Console.WriteLine("Player "+Convert.ToString(_winner)+" won!");
+                        if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                         else Console.WriteLine("Draw.");
                         break;
                     }
@@ -88,7 +96,7 @@ public class WebGameClient
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
                         Board.ShowBoard(history[boardStateIndex], _role, movesHistory[boardStateIndex]);
-                        if (_winner == 1 || _winner == 2) Console.WriteLine("Player "+Convert.ToString(_winner)+" won!");
+                        if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                         else Console.WriteLine("Draw.");
                         break;
                     }
@@ -97,7 +105,7 @@ public class WebGameClient
                     Console.WriteLine("\x1b[3J");
                     Console.Clear();
                     Board.ShowBoard(history[boardStateIndex], _role, movesHistory[boardStateIndex]);
-                    if (_winner == 1 || _winner == 2) Console.WriteLine("Player "+Convert.ToString(_winner)+" won!");
+                    if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                     else Console.WriteLine("Draw.");
 
                     break;
@@ -108,7 +116,7 @@ public class WebGameClient
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
                         Board.ShowBoard(history[boardStateIndex], 0);
-                        if (_winner == 1 || _winner == 2) Console.WriteLine("Player "+Convert.ToString(_winner)+" won!");
+                        if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                         else Console.WriteLine("Draw.");
                         break;
                     }
@@ -117,7 +125,7 @@ public class WebGameClient
                     Console.WriteLine("\x1b[3J");
                     Console.Clear();
                     Board.ShowBoard(history[boardStateIndex], 0, movesHistory[boardStateIndex]);
-                    if (_winner == 1 || _winner == 2) Console.WriteLine("Player "+Convert.ToString(_winner)+" won!");
+                    if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                     else Console.WriteLine("Draw.");
 
                     break;
