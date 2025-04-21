@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ConsoleMenu;
 
 namespace ConsoleMancala
@@ -213,6 +214,9 @@ namespace ConsoleMancala
                 {
                     case "New Hot seat game":
                         HotSitGame(settings);
+                        break;
+                    case "New online game":
+                        Task.Run(() => new WebGameClient().RunAsync(settings)).Wait();
                         break;
                     case "Settings":
                         Menu.ChangeSettings(settings, 
