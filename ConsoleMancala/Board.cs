@@ -29,6 +29,8 @@ namespace ConsoleMancala
         // * |‾‾| [  ] [  ] [  ] [  ] [  ] [  ] |‾‾|
         // * |00| ----------------------------- |00|
         // * |__| [  ] [  ] [  ] [  ] [  ] [  ] |__|
+        // FIXME: In future add animation or some way to opponent see the move of his opponent clearly.
+        // TODO: Discuss it with someone
         public static void ShowBoard(int[] board, int showFromPerspective=0, int selected=-1, bool debug=false)
         {
             int pitsCount = (board.Length-3)/2;
@@ -40,6 +42,8 @@ namespace ConsoleMancala
             ConsoleColor selectColor2 = ConsoleColor.Green;
             ConsoleColor endIndexColor = ConsoleColor.DarkBlue;
             Console.ForegroundColor = consoleColor;
+            // FIXME: Show 0 or __ in empty pits instead of 2 spaces.
+            // So player can see if pieces from his selected pit reach empty pit.
             if(turn == 1)
             {
                 for(int i=board.Length-3; i>pitsCount; i--)

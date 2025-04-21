@@ -158,8 +158,10 @@ public class WebGameClient
 
         _connection.On<string>("GameState", (state) =>
         {
+            // FIXME: Bug when board doubles.
             string[] gamestate = state.Split(",");
             int[] bc = new int[board.Length];
+            // FIXME: when trying to go throw history it breaks
             if(gamestate[gamestate.Length-1] != "")
             {
                 int previousMove = Convert.ToInt16(gamestate[gamestate.Length-1]);
