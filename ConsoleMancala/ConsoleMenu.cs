@@ -4,13 +4,13 @@ using System.Linq;
 
 namespace ConsoleMenu
 {
-    abstract class SettingOption
+    public abstract class SettingOption
     {
         public abstract void NextValue();
         public abstract void PreviousValue();
     }
 
-    class StringOption: SettingOption
+    public class StringOption: SettingOption
     {
         private string[] Options;
         private int ValueIndex;
@@ -32,7 +32,7 @@ namespace ConsoleMenu
             return Options[ValueIndex];
         }
     }
-    class BoolOption: SettingOption
+    public class BoolOption: SettingOption
     {
         private bool Value;
         public BoolOption(bool value)
@@ -52,7 +52,7 @@ namespace ConsoleMenu
             return Value.ToString();
         }
     }
-    class IntOption: SettingOption
+    public class IntOption: SettingOption
     {
         private int Value;
         private int Step;
@@ -75,7 +75,7 @@ namespace ConsoleMenu
             return Value.ToString();
         }
     }
-    class DoubleOption: SettingOption
+    public class DoubleOption: SettingOption
     {
         private double Value;
         private double Step;
@@ -98,7 +98,7 @@ namespace ConsoleMenu
             return Value.ToString();
         }
     }
-    class ColorOption: SettingOption
+    public class ColorOption: SettingOption
     {
         private int[] Colors;
         private int ColorIndex;
