@@ -42,8 +42,6 @@ namespace ConsoleMancala
             ConsoleColor selectColor2 = ConsoleColor.Green;
             ConsoleColor endIndexColor = ConsoleColor.DarkBlue;
             Console.ForegroundColor = consoleColor;
-            // FIXME: Show 0 or __ in empty pits instead of 2 spaces.
-            // So player can see if pieces from his selected pit reach empty pit.
             if(turn == 1)
             {
                 for(int i=board.Length-3; i>pitsCount; i--)
