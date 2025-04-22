@@ -75,8 +75,6 @@ public class WebGameClient
         bool analyzingParty = true;
         int boardStateIndex = history.Count-1;
         ConsoleKeyInfo keyInfo;
-        // FIXME: history works really strange
-        // need fix cause weirdly shows player's and his opponent's turns
         while(analyzingParty)
         {
             keyInfo = Console.ReadKey();
