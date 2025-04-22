@@ -75,6 +75,8 @@ public class WebGameClient
         bool analyzingParty = true;
         int boardStateIndex = history.Count-1;
         ConsoleKeyInfo keyInfo;
+        // FIXME: history works really strange
+        // need fix cause weirdly shows player's and his opponent's turns
         while(analyzingParty)
         {
             keyInfo = Console.ReadKey();
@@ -158,14 +160,12 @@ public class WebGameClient
 
         _connection.On<string>("GameState", (state) =>
         {
-            // FIXME: Bug when board doubles.
             string[] gamestate = state.Split(",");
             int[] bc = new int[board.Length];
-            // FIXME: when trying to go throw history it breaks
             if(gamestate[gamestate.Length-1] != "")
             {
                 int previousMove = Convert.ToInt16(gamestate[gamestate.Length-1]);
-                if(movesHistory.Count+1 == history.Count-1) movesHistory.Add(previousMove);
+                movesHistory.Add(previousMove);
             }
             for(int i=0; i<board.Length; i++) bc[i] = Convert.ToInt16(gamestate[i]);
             history.Add(bc);
@@ -208,6 +208,8 @@ public class WebGameClient
                 turn = board[board.Length-1];
                 i = turn == 1 ? 3 : 10;
                 keyNotSelected = true;
+                Console.WriteLine("\x1b[3J");
+                Console.Clear();
                 Board.ShowBoard(board, _role, i, debug);
                 Console.WriteLine("It's Your turn");
                 while(keyNotSelected)
