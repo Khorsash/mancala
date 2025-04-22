@@ -53,7 +53,7 @@ namespace ConsoleMancala
                         if(i == selected) Console.ForegroundColor = selectColor; 
                         Console.Write(" [");
                         Console.ForegroundColor = endIndexColor;
-                        Console.Write(board[i]>0?IntTo2DigitString(board[i]):"  ");
+                        Console.Write(board[i]>0?IntTo2DigitString(board[i]):"00");
                         Console.ForegroundColor = consoleColor;
                         if(i == selected) Console.ForegroundColor = selectColor;
                         Console.Write("]");
@@ -87,7 +87,7 @@ namespace ConsoleMancala
                         if(i == selected) Console.ForegroundColor = selectColor; 
                         Console.Write(" [");
                         Console.ForegroundColor = endIndexColor;
-                        Console.Write(board[i]>0?IntTo2DigitString(board[i]):"  ");
+                        Console.Write(board[i]>0?IntTo2DigitString(board[i]):"00");
                         Console.ForegroundColor = consoleColor;
                         if(i == selected) Console.ForegroundColor = selectColor;
                         Console.Write("]");
@@ -116,11 +116,11 @@ namespace ConsoleMancala
             int opponentsBar = turn == 1 ? board[board.Length-2] : board[pitsCount];
             if(selected != -1 && (turn == 1 ? 13 : 6) == turnEnd)
             {
-                Console.Write(" |");
+                Console.Write("|");
                 Console.ForegroundColor = endIndexColor;
                 Console.Write(IntTo2DigitString(opponentsBar));
                 Console.ForegroundColor = consoleColor;
-                Console.Write("|");
+                Console.Write("| ");
             }
             else
             {Console.Write("|"+IntTo2DigitString(opponentsBar)+"| ");}
@@ -147,7 +147,7 @@ namespace ConsoleMancala
                         if(i == selected) Console.ForegroundColor = selectColor; 
                         Console.Write(" [");
                         Console.ForegroundColor = endIndexColor;
-                        Console.Write(board[i]>0?IntTo2DigitString(board[i]):"  ");
+                        Console.Write(board[i]>0?IntTo2DigitString(board[i]):"00");
                         Console.ForegroundColor = consoleColor;
                         if(i == selected) Console.ForegroundColor = selectColor;
                         Console.Write("]");
@@ -180,7 +180,7 @@ namespace ConsoleMancala
                         if(i == selected) Console.ForegroundColor = selectColor; 
                         Console.Write(" [");
                         Console.ForegroundColor = endIndexColor;
-                        Console.Write(board[i]>0?IntTo2DigitString(board[i]):"  ");
+                        Console.Write(board[i]>0?IntTo2DigitString(board[i]):"00");
                         Console.ForegroundColor = consoleColor;
                         if(i == selected) Console.ForegroundColor = selectColor;
                         Console.Write("]");
