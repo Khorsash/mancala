@@ -204,7 +204,6 @@ public class WebGameClient
 
         _connection.On<string>("GameOver", (msg) =>
         {
-            Console.WriteLine("Game Over: "+(msg == _role.ToString() ? "You won!" : "You lost"));
             _canMove = false;
             _gameEnded.TrySetResult(true);
             _winner = Convert.ToInt16(msg);
@@ -292,5 +291,9 @@ public class WebGameClient
                 {await Task.Delay(100);}
             }
         }
+        Console.WriteLine("\x1b[3J");
+        Console.Clear();
+        Board.ShowBoard(board, _role, -1, debug);
+        Console.WriteLine("Game Over: "+(_winner == _role ? "You won!" : "You lost"));
     }
 }
