@@ -204,6 +204,7 @@ namespace ConsoleMancala
             settings["Show debug"] = new BoolOption(false);
             settings["Menu select color"] = new ColorOption(menuSelectColors, 13);
             settings["Settings select color"] = new ColorOption(menuSelectColors, 13);
+            settings["Show opponent's turn time(in ms)"] = new IntOption(700, 100);
 
             bool Running = true;
             while(Running)

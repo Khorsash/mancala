@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using ConsoleMancala;
 using ConsoleMenu;
@@ -13,6 +14,7 @@ public class WebGameClient
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     private string _sessionId = "";
     private int _role;
+    private int _showMoveTime;
     private bool _canMove;
     private int _winner = 0;
     private int[] board = new int[15];
@@ -20,6 +22,9 @@ public class WebGameClient
     private List<int> movesHistory = new List<int>();
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     private TaskCompletionSource<bool> _gameEnded;
+    private readonly SemaphoreSlim _drawLock = new(1, 1);
+    private bool _gameStarted;
+    private bool _waitingForResult;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -35,6 +40,10 @@ public class WebGameClient
         _gameEnded = new TaskCompletionSource<bool>();
         board = new int[15];
         history = new List<int[]>();
+        _gameStarted = false;
+        _waitingForResult = false;
+        _showMoveTime = Convert.ToInt16(settings["Show opponent's turn time(in ms)"].ToString());
+        _showMoveTime = _showMoveTime < 0 ? _showMoveTime * -1 : _showMoveTime;
         bool debug = settings["Show debug"].ToString() == "True" ? true : false;
 
         Console.WriteLine("Enter server URL (default: http://192.168.0.18:5214): ");
@@ -156,23 +165,41 @@ public class WebGameClient
             Console.WriteLine("Waiting for opponent...");
         });
 
-        _connection.On<string>("GameState", (state) =>
+        _connection.On<string>("GameState", async (state) =>
         {
-            string[] gamestate = state.Split(",");
-            int[] bc = new int[board.Length];
-            if(gamestate[gamestate.Length-1] != "")
+            if(!_gameStarted) _gameStarted = true;
+            await _drawLock.WaitAsync();
+
+            try
             {
-                int previousMove = Convert.ToInt16(gamestate[gamestate.Length-1]);
-                movesHistory.Add(previousMove);
+                string[] gamestate = state.Split(",");
+                int[] bc = new int[board.Length];
+                for(int i=0; i<board.Length; i++) bc[i] = Convert.ToInt16(gamestate[i]);
+                if(gamestate[gamestate.Length-1] != "")
+                {
+                    int previousMove = Convert.ToInt16(gamestate[gamestate.Length-1]);
+                    movesHistory.Add(previousMove);
+                    if(board[board.Length-1] != _role)
+                    {
+                        Console.WriteLine("\x1b[3J");
+                        Console.Clear();
+                        Board.ShowBoard(board, _role, previousMove, debug);
+                        await Task.Delay(_showMoveTime);
+                    }
+                }
+                history.Add(bc);
+                board = bc.ToArray();
+                Console.WriteLine("\x1b[3J");
+                Console.Clear();
+                Board.ShowBoard(board, _role, -1, debug);
+                _canMove = board[board.Length-1] == _role;
+                Console.WriteLine(board[board.Length-1] == _role ? "It's Your turn" : "It's Opponent's turn");
+                _waitingForResult = false;
             }
-            for(int i=0; i<board.Length; i++) bc[i] = Convert.ToInt16(gamestate[i]);
-            history.Add(bc);
-            board = bc.ToArray();
-            Console.WriteLine("\x1b[3J");
-            Console.Clear();
-            Board.ShowBoard(board, _role, -1, debug);
-            _canMove = board[board.Length-1] == _role;
-            Console.WriteLine(board[board.Length-1] == _role ? "It's Your turn" : "It's Opponent's turn");
+            finally
+            {
+                _drawLock.Release();
+            }
         });
 
         _connection.On<string>("GameOver", (msg) =>
@@ -237,10 +264,32 @@ public class WebGameClient
                 int move = turn == 1 ? i : i-7;
                 await _connection.InvokeAsync("MakeMove", _sessionId, move.ToString());
                 _canMove = false;
+                _waitingForResult = true;
             }
             else
             {
-                await Task.Delay(100);
+                if(_gameStarted && !_waitingForResult)
+                {
+                    await _drawLock.WaitAsync();
+                    try
+                    {
+                        Console.WriteLine("\x1b[3J");
+                        Console.Clear();
+                        Board.ShowBoard(board, _role, -1, debug);
+                        Console.Write("Waiting for opponent's turn");
+                        for(int k=0; k<3; k++)
+                        {
+                            Console.Write(".");
+                            await Task.Delay(300);
+                        }
+                    }
+                    finally
+                    {
+                        _drawLock.Release();
+                    }
+                }
+                else
+                {await Task.Delay(100);}
             }
         }
     }
