@@ -1,0 +1,8 @@
+- Move animation 
+- Game rules in menu
+- Quick game
+- Public/private games and list of public avaliable on server
+- Spectate matches
+- Add localizations
+- Add Kalah variation(possibly)
+- In-game chat(trash but fun)
