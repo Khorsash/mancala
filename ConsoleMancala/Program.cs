@@ -204,6 +204,7 @@ namespace ConsoleMancala
             settings["Show debug"] = new BoolOption(false);
             settings["Show zeros"] = new BoolOption(true);
             settings["Menu select color"] = new ColorOption(menuSelectColors, 13);
+            settings["Default color"] = new ColorOption(menuSelectColors, 7);
             settings["Settings select color"] = new ColorOption(menuSelectColors, 13);
             settings["Show opponent's turn time(in ms)"] = new IntOption(300, 50);
 
@@ -211,7 +212,8 @@ namespace ConsoleMancala
             while(Running)
             {
                 string choice = Menu.MenuShow(Menu.Paginate(MenuOptions, 4), 0, "", 
-                                            (ConsoleColor)((ColorOption)settings["Menu select color"]).GetColor());
+                                               (ConsoleColor)((ColorOption)settings["Menu select color"]).GetColor(),
+                                                (ConsoleColor)((ColorOption)settings["Default color"]).GetColor());
                 switch(choice)
                 {
                     case "New Hot seat game":
@@ -222,7 +224,8 @@ namespace ConsoleMancala
                         break;
                     case "Settings":
                         Menu.ChangeSettings(settings, 
-                                            (ConsoleColor)((ColorOption)settings["Settings select color"]).GetColor());
+                                             (ConsoleColor)((ColorOption)settings["Settings select color"]).GetColor(),
+                                              (ConsoleColor)((ColorOption)settings["Default color"]).GetColor());
                         break;
                     case "Exit":
                         Running = false;

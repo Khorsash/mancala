@@ -191,7 +191,9 @@ namespace ConsoleMenu
             }
             return pages;
         }
-        private static void ShowPage<T>(T[] page, string title = "", ConsoleColor selectionColor = ConsoleColor.Green)
+        private static void ShowPage<T>(T[] page, string title = "", 
+                                         ConsoleColor selectionColor = ConsoleColor.Green,
+                                          ConsoleColor consoleColor = ConsoleColor.Gray)
         {
             Console.WriteLine("\x1b[3J");
             Console.Clear();
@@ -202,7 +204,7 @@ namespace ConsoleMenu
             {
                 if (cond)
                 {
-                    Console.ForegroundColor = default;
+                    Console.ForegroundColor = consoleColor;
                     cond = false;
                 }
                 if (i == 0)
@@ -214,7 +216,7 @@ namespace ConsoleMenu
                 }
                 Console.WriteLine("  " + Convert.ToString(page[i]));
             }
-            Console.ForegroundColor = default;
+            Console.ForegroundColor = consoleColor;
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             Console.SetCursorPosition(Convert.ToString(page[0]).Length + 2, YOffset);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -231,7 +233,9 @@ namespace ConsoleMenu
         /// 
         /// </summary> 
         /// <returns>T of choice</returns>
-        public static T MenuShow<T>(T[][] pages, int pageIndex = 0, string title = "", ConsoleColor selectionColor = ConsoleColor.Green)
+        public static T MenuShow<T>(T[][] pages, int pageIndex = 0, string title = "", 
+                                     ConsoleColor selectionColor = ConsoleColor.Green, 
+                                      ConsoleColor consoleColor = ConsoleColor.Gray)
         {
             // BlockConsole();
             int choice = 0;
@@ -239,7 +243,7 @@ namespace ConsoleMenu
             int YOffset = title != "" ? title.Split("\n").Length : 0;
 
             int pi = pageIndex;
-            ShowPage(pages[pi], title, selectionColor);
+            ShowPage(pages[pi], title, selectionColor, consoleColor);
             while (true)
             {
                 ConsoleKeyInfo key = Console.ReadKey();
@@ -247,7 +251,7 @@ namespace ConsoleMenu
                 {
                     case ConsoleKey.UpArrow:
                         Console.SetCursorPosition(0, choice + YOffset);
-                        Console.ForegroundColor = default;
+                        Console.ForegroundColor = consoleColor;
                         Console.Write("  " + pages[pi][choice]);
                         if (choice > 0)
                         {choice--;}
@@ -256,11 +260,11 @@ namespace ConsoleMenu
                         Console.SetCursorPosition(0, choice + YOffset);
                         Console.ForegroundColor = selectionColor;
                         Console.Write("> " + pages[pi][choice]);
-                        Console.ForegroundColor = default;
+                        Console.ForegroundColor = consoleColor;
                         break;
                     case ConsoleKey.DownArrow:
                         Console.SetCursorPosition(0, choice + YOffset);
-                        Console.ForegroundColor = default;
+                        Console.ForegroundColor = consoleColor;
                         Console.Write("  " + pages[pi][choice]);
                         if (choice < pages[pi].Length - 1)
                         {choice++;}
@@ -269,7 +273,7 @@ namespace ConsoleMenu
                         Console.SetCursorPosition(0, choice + YOffset);
                         Console.ForegroundColor = selectionColor;
                         Console.Write("> " + pages[pi][choice]);
-                        Console.ForegroundColor = default;
+                        Console.ForegroundColor = consoleColor;
                         break;
                     case ConsoleKey.Enter:
                         Console.WriteLine("\x1b[3J");
@@ -280,7 +284,7 @@ namespace ConsoleMenu
                         {pi--;}
                         else
                         {pi = pages.Length - 1;}
-                        ShowPage(pages[pi], title, selectionColor);
+                        ShowPage(pages[pi], title, selectionColor, consoleColor);
                         choice = 0;
                         break;
                     case ConsoleKey.RightArrow:
@@ -288,25 +292,28 @@ namespace ConsoleMenu
                         {pi++;}
                         else
                         {pi = 0;}
-                        ShowPage(pages[pi], title, selectionColor);
+                        ShowPage(pages[pi], title, selectionColor, consoleColor);
                         choice = 0;
                         break;
                     case ConsoleKey.Escape:
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
                         T? x = default;
+                        if(typeof(T) == typeof(string)) return (T)(object)"";
                         return x == null ? pages[0][0] : x;
                 }
             }
         }
-        public static void ShowSettings(Dictionary<string, SettingOption> settings, int selected, ConsoleColor selectionColor=ConsoleColor.Green)
+        public static void ShowSettings(Dictionary<string, SettingOption> settings, int selected, 
+                                        ConsoleColor selectionColor=ConsoleColor.Green,
+                                        ConsoleColor consoleColor = ConsoleColor.Gray)
         {
             string[] settingNames = settings.Keys.ToArray();
             ConsoleColor valueSelectedColor = ConsoleColor.White;
             for(int i=0; i<settingNames.Length; i++)
             {
                 if(i==selected) Console.ForegroundColor = selectionColor;
-                else Console.ForegroundColor = default;
+                else Console.ForegroundColor = consoleColor;
                 Console.Write(settingNames[i]+": ");
                 if(i==selected) Console.ForegroundColor = valueSelectedColor;
                 Console.Write("< ");
@@ -315,13 +322,15 @@ namespace ConsoleMenu
             }
 
         }
-        public static void ChangeSettings(Dictionary<string, SettingOption> settings, ConsoleColor selectionColor = ConsoleColor.Green)
+        public static void ChangeSettings(Dictionary<string, SettingOption> settings, 
+                                           ConsoleColor selectionColor = ConsoleColor.Green,
+                                            ConsoleColor consoleColor = ConsoleColor.Gray)
         {
             string[] settingNames = settings.Keys.ToArray();
             int currentSetting = 0;
             Console.WriteLine("\x1b[3J");
             Console.Clear();
-            ShowSettings(settings, currentSetting, selectionColor);
+            ShowSettings(settings, currentSetting, selectionColor, consoleColor);
             bool notConfirmed = true;
             while(notConfirmed)
             {
@@ -332,25 +341,25 @@ namespace ConsoleMenu
                         currentSetting = (currentSetting+1) % settingNames.Length;
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
-                        ShowSettings(settings, currentSetting, selectionColor);
+                        ShowSettings(settings, currentSetting, selectionColor, consoleColor);
                         break;
                     case ConsoleKey.UpArrow:
                         currentSetting = currentSetting == 0 ? settingNames.Length-1 : currentSetting-1;
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
-                        ShowSettings(settings, currentSetting, selectionColor);
+                        ShowSettings(settings, currentSetting, selectionColor, consoleColor);
                         break;
                     case ConsoleKey.LeftArrow:
                         settings[settingNames[currentSetting]].PreviousValue();
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
-                        ShowSettings(settings, currentSetting, selectionColor);
+                        ShowSettings(settings, currentSetting, selectionColor, consoleColor);
                         break;
                     case ConsoleKey.RightArrow:
                         settings[settingNames[currentSetting]].NextValue();
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
-                        ShowSettings(settings, currentSetting, selectionColor);
+                        ShowSettings(settings, currentSetting, selectionColor, consoleColor);
                         break;
                     case ConsoleKey.Escape:
                         Console.WriteLine("\x1b[3J");
