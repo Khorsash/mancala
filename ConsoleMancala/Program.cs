@@ -202,9 +202,10 @@ namespace ConsoleMancala
             int[] menuSelectColors = new int[15];
             for(int i=1; i<16; i++) menuSelectColors[i-1] = i;
             settings["Show debug"] = new BoolOption(false);
+            settings["Show zeros"] = new BoolOption(true);
             settings["Menu select color"] = new ColorOption(menuSelectColors, 13);
             settings["Settings select color"] = new ColorOption(menuSelectColors, 13);
-            settings["Show opponent's turn time(in ms)"] = new IntOption(700, 100);
+            settings["Show opponent's turn time(in ms)"] = new IntOption(300, 50);
 
             bool Running = true;
             while(Running)
