@@ -99,7 +99,7 @@ public class WebGameClient
                         boardStateIndex = history.Count-1;
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
-                        Board.ShowBoard(history[boardStateIndex], _role, -1, false, _showZeros);
+                        Board.ShowBoard(history[boardStateIndex], _role, -1, false, false, _showZeros);
                         if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                         else Console.WriteLine("Draw.");
                         break;
@@ -109,7 +109,7 @@ public class WebGameClient
                         boardStateIndex = 0;
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
-                        Board.ShowBoard(history[boardStateIndex], _role, movesHistory[boardStateIndex], false, _showZeros);
+                        Board.ShowBoard(history[boardStateIndex], _role, movesHistory[boardStateIndex], false, false, _showZeros);
                         if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                         else Console.WriteLine("Draw.");
                         break;
@@ -118,7 +118,7 @@ public class WebGameClient
                     boardStateIndex++;
                     Console.WriteLine("\x1b[3J");
                     Console.Clear();
-                    Board.ShowBoard(history[boardStateIndex], _role, movesHistory[boardStateIndex], false, _showZeros);
+                    Board.ShowBoard(history[boardStateIndex], _role, movesHistory[boardStateIndex], false, false, _showZeros);
                     if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                     else Console.WriteLine("Draw.");
 
@@ -129,7 +129,7 @@ public class WebGameClient
                         boardStateIndex = history.Count-1;
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
-                        Board.ShowBoard(history[boardStateIndex], _role, -1, false, _showZeros);
+                        Board.ShowBoard(history[boardStateIndex], _role, -1, false, false, _showZeros);
                         if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                         else Console.WriteLine("Draw.");
                         break;
@@ -138,7 +138,7 @@ public class WebGameClient
                     boardStateIndex--;
                     Console.WriteLine("\x1b[3J");
                     Console.Clear();
-                    Board.ShowBoard(history[boardStateIndex], _role, movesHistory[boardStateIndex], false, _showZeros);
+                    Board.ShowBoard(history[boardStateIndex], _role, movesHistory[boardStateIndex], false, false, _showZeros);
                     if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                     else Console.WriteLine("Draw.");
 

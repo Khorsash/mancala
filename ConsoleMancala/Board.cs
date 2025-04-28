@@ -286,8 +286,11 @@ namespace ConsoleMancala
                     }
                     Console.WriteLine("\x1b[3J");
                     Console.Clear();
-                    Console.Write("Current index: ");
-                    Console.WriteLine(currentIndex);
+                    if(debug)
+                    {
+                        Console.Write("Current index: ");
+                        Console.WriteLine(currentIndex);
+                    }
                     ShowBoard(bc, showFromPerspective, currentIndex, debug, true, showZeros);
                     await Task.Delay(showMoveTime);
                     bc[currentIndex]++;
