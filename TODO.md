@@ -1,6 +1,6 @@
 - Move animation (Done)
 - Game rules in menu
-- Quick game
+- Quick game (Done)
 - Public/private games and list of public avaliable on server
 - Spectate matches
 - Add localizations

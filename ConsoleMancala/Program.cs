@@ -196,7 +196,7 @@ namespace ConsoleMancala
         static void Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            string[] MenuOptions = new string[4] {"New Hot seat game", "New online game", "Settings", "Exit"};
+            string[] MenuOptions = new string[5] {"New Hot seat game", "New online game", "Rules", "Settings", "Exit"};
 
             Dictionary<string, SettingOption> settings = new Dictionary<string, SettingOption>();
             int[] menuSelectColors = new int[15];
@@ -211,7 +211,7 @@ namespace ConsoleMancala
             bool Running = true;
             while(Running)
             {
-                string choice = Menu.MenuShow(Menu.Paginate(MenuOptions, 4), 0, "", 
+                string choice = Menu.MenuShow(Menu.Paginate(MenuOptions, 5), 0, "", 
                                                (ConsoleColor)((ColorOption)settings["Menu select color"]).GetColor(),
                                                 (ConsoleColor)((ColorOption)settings["Default color"]).GetColor());
                 switch(choice)
@@ -226,6 +226,75 @@ namespace ConsoleMancala
                         Menu.ChangeSettings(settings, 
                                              (ConsoleColor)((ColorOption)settings["Settings select color"]).GetColor(),
                                               (ConsoleColor)((ColorOption)settings["Default color"]).GetColor());
+                        break;
+                    case "Rules":
+                        Console.WriteLine("Rules of Mangala(Turkish version of mancala)");
+                        Console.WriteLine();
+                        Console.WriteLine("This is game for 2 players");
+                        Console.WriteLine("Each player has 6 pits in front of him");
+                        Console.WriteLine("and 1 big pit by his right(which is called \"barn\")");
+                        Console.WriteLine();
+                        Console.WriteLine("|‾‾| [  ] [  ] [  ] [  ] [  ] [  ] |‾‾|");
+                        Console.WriteLine("|00| ----------------------------- |00|");
+                        Console.WriteLine("|__| [  ] [  ] [  ] [  ] [  ] [  ] |__|");
+                        Console.WriteLine();
+                        Console.WriteLine("In the start of the party each player has 4 pieces");
+                        Console.WriteLine("in each pit and 0 in barn");
+                        Console.WriteLine();
+                        Console.WriteLine(" v <- <- <- <- <- <- <- <- <- <- <- <- ");
+                        Console.WriteLine("|‾‾| [04] [04] [04] [04] [04] [04] |‾‾|");
+                        Console.WriteLine("|00| ----------------------------- |00|");
+                        Console.WriteLine("|__| [04] [04] [04] [04] [04] [04] |__|");
+                        Console.WriteLine("-> -> -> -> -> -> -> -> -> -> -> -> ^  ");
+                        Console.WriteLine();
+                        Console.WriteLine("Each turn player can get all pieces");
+                        Console.WriteLine("from 1 of his own 6 pits and distribute them");
+                        Console.WriteLine("(but can't to get pieces from own barn)");
+                        Console.WriteLine("in next pits counterclockwise");
+                        Console.WriteLine("(including own barn and excluding opponent's barn)");
+
+                        Console.WriteLine("Also player need to leave 1 of distibuted pieces");
+                        Console.WriteLine("in pit from which he got pieces,");
+                        Console.WriteLine("in case when it was 1 piece in pit");
+                        Console.WriteLine("then it's just put in next pit");
+                        Console.WriteLine();
+                        Console.WriteLine("Additional rules");
+                        Console.WriteLine();
+                        Console.WriteLine("- If player distributes pieces,");
+                        Console.WriteLine("  and his last pieces ends up in his barn,");
+                        Console.WriteLine("  then he can make an additional turn");
+                        Console.WriteLine();
+                        Console.WriteLine("- If player distributes pieces,");
+                        Console.WriteLine("  and his last piece ends up in");
+                        Console.WriteLine("  his own empty pit");
+                        Console.WriteLine("  and if there pieces in opposite pit(opponent's)");
+                        Console.WriteLine("  then he takes last distributed piece");
+                        Console.WriteLine("  and all pieces from opposite pit");
+                        Console.WriteLine("  and puts them in his barn");
+                        Console.WriteLine();
+                        Console.WriteLine("- If player distributes pieces,");
+                        Console.WriteLine("  and his last piece ends up in");
+                        Console.WriteLine("  opponent's pit");
+                        Console.WriteLine("  and if that in that pit after that is");
+                        Console.WriteLine("  even count of pieces");
+                        Console.WriteLine("  then he takes all pieces");
+                        Console.WriteLine("  from this opponent's pit");
+                        Console.WriteLine("  and puts them in his barn");
+                        Console.WriteLine();
+                        Console.WriteLine("- If there is no pieces left");
+                        Console.WriteLine("  in 6 pits of one of players");
+                        Console.WriteLine("  after his turn");
+                        Console.WriteLine("  then he takes all the pieces");
+                        Console.WriteLine("  from opponent's 6 pits");
+                        Console.WriteLine("  and puts them in his barn");
+                        Console.WriteLine();
+                        Console.WriteLine("Goal of the game is");
+                        Console.WriteLine("to get as much pieces in barn as you can");
+                        Console.WriteLine("Wins that one that got more pieces in barn than another");
+                        ConsoleKeyInfo cki = Console.ReadKey();
+                        while(cki.Key != ConsoleKey.Escape) 
+                        {cki = Console.ReadKey();}
+                        ClearConsole();
                         break;
                     case "Exit":
                         Running = false;
