@@ -86,7 +86,29 @@ public class WebGameClient
                 case "Create game":
                     Console.WriteLine("Enter your game id(or leave blank so it will be generated):");
                     string newSessionId = Console.ReadLine() ?? "";
-                    await _connection.InvokeAsync("CreateGame", newSessionId);
+                    BoolOption publicGame = new BoolOption(true);
+                    Console.WriteLine("Is game public? < "+publicGame.ToString()+" >");
+                    ConsoleKeyInfo k;
+                    bool publicityIsntChosen = true;
+                    while(publicityIsntChosen)
+                    {
+                        k = Console.ReadKey();
+                        switch(k.Key)
+                        {
+                            case ConsoleKey.RightArrow: case ConsoleKey.LeftArrow:
+                                publicGame.NextValue();
+                                Console.WriteLine("\x1b[3J");
+                                Console.Clear();
+                                Console.WriteLine("Enter your game id(or leave blank so it will be generated):");
+                                Console.WriteLine(newSessionId);
+                                Console.WriteLine("Is game public? < "+publicGame.ToString()+" >");
+                                break;
+                            case ConsoleKey.Enter:
+                                publicityIsntChosen = false;
+                                break;
+                        }
+                    }
+                    await _connection.InvokeAsync("CreateGame", newSessionId, publicGame.ToString());
                     break;
             }
         }

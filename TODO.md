@@ -1,5 +1,5 @@
 - Move animation (Done)
-- Game rules in menu
+- Game rules in menu (Done)
 - Quick game (Done)
 - Public/private games and list of public avaliable on server
 - Spectate matches
