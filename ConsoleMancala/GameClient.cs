@@ -28,6 +28,8 @@ public class WebGameClient
     private readonly SemaphoreSlim _drawLock = new(1, 1);
     private bool _gameStarted;
     private bool _waitingForResult;
+    private ConsoleColor consoleColor;
+    private ConsoleColor selectColor;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -49,6 +51,9 @@ public class WebGameClient
         _showMoveTime = _showMoveTime < 0 ? _showMoveTime * -1 : _showMoveTime;
         _debug = settings["Show debug"].ToString() == "True";
         _showZeros = settings["Show zeros"].ToString() == "True";
+        consoleColor = (ConsoleColor)((ColorOption)settings["Default color"]).GetColor();
+        selectColor = (ConsoleColor)((ColorOption)settings["Menu select color"]).GetColor();
+        string[] options = new string[3] {"Quick game", "Join game", "Create game"};
 
         Console.WriteLine("Enter server URL (default: http://192.168.0.18:5214): ");
         var url = Console.ReadLine();
@@ -63,14 +68,34 @@ public class WebGameClient
         try
         {
             await _connection.StartAsync();
+            string choice = Menu.MenuShow(Menu.Paginate(options, 3), 0, "", selectColor, consoleColor);
+            switch(choice)
+            {
+                // FIXME: quick game for some reason always creates new game.
+                case "Quick game":
+                    await _connection.InvokeAsync("QuickGame");
+                    break;
+                case "Join game":
+                    Console.WriteLine("\x1b[3J");
+                    Console.Clear();
+                    Console.WriteLine("Enter Game ID to join:");
+                    _sessionId = Console.ReadLine() ?? "";
 
-            Console.WriteLine("Enter Game ID to join (or leave blank to create new):");
-            _sessionId = Console.ReadLine() ?? "";
-            _sessionId = string.IsNullOrEmpty(_sessionId) || string.IsNullOrWhiteSpace(_sessionId)
-                        ? Guid.NewGuid().ToString("N").Substring(0, 8) 
-                        : _sessionId;
+                    await _connection.InvokeAsync("JoinGame", _sessionId);
+                    break;
+                case "Create game":
+                    Console.WriteLine("Enter your game id(or leave blank so it will be generated):");
+                    string newSessionId = Console.ReadLine() ?? "";
+                    await _connection.InvokeAsync("CreateGame", newSessionId);
+                    break;
+            }
+            // Console.WriteLine("Enter Game ID to join (or leave blank to create new):");
+            // _sessionId = Console.ReadLine() ?? "";
+            // _sessionId = string.IsNullOrEmpty(_sessionId) || string.IsNullOrWhiteSpace(_sessionId)
+            //             ? Guid.NewGuid().ToString("N").Substring(0, 8) 
+            //             : _sessionId;
 
-            await _connection.InvokeAsync("JoinGame", _sessionId);
+            // await _connection.InvokeAsync("JoinGame", _sessionId);
         }
         catch (Exception ex)
         {
@@ -155,12 +180,17 @@ public class WebGameClient
 
     private void RegisterHandlers()
     {
+        _connection.On<string>("sessionID", (sessionId) => 
+        {
+            _sessionId = _sessionId == "" ? sessionId : _sessionId;
+        });
+        
         _connection.On<string>("Role", (role) =>
         {
             _role = Convert.ToInt16(role);
         });
 
-        _connection.On("WaitingForOpponent", () =>
+        _connection.On<string>("WaitingForOpponent", (sessionId) =>
         {
             Console.WriteLine("\x1b[3J");
             Console.Clear();
