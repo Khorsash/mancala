@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ConsoleMancala;
 using ConsoleMenu;
 using Microsoft.AspNetCore.SignalR.Client;
+using System.Net;
+using System.Net.Sockets;
 
 public class WebGameClient
 {
@@ -55,9 +56,9 @@ public class WebGameClient
         selectColor = (ConsoleColor)((ColorOption)settings["Menu select color"]).GetColor();
         string[] options = new string[3] {"Quick game", "Join game", "Create game"};
 
-        Console.WriteLine("Enter server URL (default: http://192.168.0.18:5214): ");
+        Console.WriteLine("Enter server URL (default: "+GetLocalIPv4Address("5214")+"):" );
         var url = Console.ReadLine();
-        if (string.IsNullOrWhiteSpace(url)) url = "http://192.168.0.18:5214";
+        if (string.IsNullOrWhiteSpace(url)) url = GetLocalIPv4Address("5214");
 
         _connection = new HubConnectionBuilder()
             .WithUrl($"{url}/game")
@@ -322,5 +323,24 @@ public class WebGameClient
         Console.Clear();
         Board.ShowBoard(board, _role, -1, _debug, false, _showZeros);
         Console.WriteLine("Game Over: "+(_winner == _role ? "You won!" : "You lost"));
+    }
+    public static string GetLocalIPv4Address(string port)
+    {
+        try
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return "http://"+ip.ToString()+":"+port;
+                }
+            }
+            return "http://"+"127.0.0.1"+":"+port; // Fallback to loopback address
+        }
+        catch
+        {
+            return "http://"+"127.0.0.1"+":"+port; // Fallback to loopback address on error
+        }
     }
 }
