@@ -71,7 +71,6 @@ public class WebGameClient
             string choice = Menu.MenuShow(Menu.Paginate(options, 3), 0, "", selectColor, consoleColor);
             switch(choice)
             {
-                // FIXME: quick game for some reason always creates new game.
                 case "Quick game":
                     await _connection.InvokeAsync("QuickGame");
                     break;
@@ -89,13 +88,6 @@ public class WebGameClient
                     await _connection.InvokeAsync("CreateGame", newSessionId);
                     break;
             }
-            // Console.WriteLine("Enter Game ID to join (or leave blank to create new):");
-            // _sessionId = Console.ReadLine() ?? "";
-            // _sessionId = string.IsNullOrEmpty(_sessionId) || string.IsNullOrWhiteSpace(_sessionId)
-            //             ? Guid.NewGuid().ToString("N").Substring(0, 8) 
-            //             : _sessionId;
-
-            // await _connection.InvokeAsync("JoinGame", _sessionId);
         }
         catch (Exception ex)
         {
