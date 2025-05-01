@@ -197,6 +197,7 @@ namespace ConsoleMancala
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             string[] MenuOptions = new string[5] {"New Hot seat game", "New online game", "Rules", "Settings", "Exit"};
+            string[] SettingCatgs = new string[2] {"Main Settings", "Change connect ip"};
 
             Dictionary<string, SettingOption> settings = new Dictionary<string, SettingOption>();
             int[] menuSelectColors = new int[15];
@@ -207,6 +208,7 @@ namespace ConsoleMancala
             settings["Default color"] = new ColorOption(menuSelectColors, 7);
             settings["Settings select color"] = new ColorOption(menuSelectColors, 13);
             settings["Show opponent's turn time(in ms)"] = new IntOption(300, 50);
+            settings["Connect ip"] = new StringSetValue(WebGameClient.GetLocalIPv4Address("5214"));
 
             bool Running = true;
             while(Running)
@@ -223,9 +225,32 @@ namespace ConsoleMancala
                         Task.Run(() => new WebGameClient().RunAsync(settings)).Wait();
                         break;
                     case "Settings":
-                        Menu.ChangeSettings(settings, 
+                        bool settingsRunning = true;
+                        while(settingsRunning)
+                        {
+                            string chc = Menu.MenuShow(Menu.Paginate(SettingCatgs, SettingCatgs.Length), 0, "", 
+                                                        (ConsoleColor)((ColorOption)settings["Menu select color"]).GetColor(),
+                                                         (ConsoleColor)((ColorOption)settings["Default color"]).GetColor());
+                            switch(chc)
+                            {
+                                case "Main Settings":
+                                    ClearConsole();
+                                    Menu.ChangeSettings(settings, 
                                              (ConsoleColor)((ColorOption)settings["Settings select color"]).GetColor(),
                                               (ConsoleColor)((ColorOption)settings["Default color"]).GetColor());
+                                    break;
+                                case "Change connect ip":
+                                    ClearConsole();
+                                    Console.WriteLine("Enter server URL (now is: "+settings["Connect ip"].ToString()+"):" );
+                                    string connectIP = Console.ReadLine() ?? WebGameClient.GetLocalIPv4Address("5214");
+                                    connectIP = connectIP == "" ? WebGameClient.GetLocalIPv4Address("5214") : connectIP;
+                                    settings["Connect ip"].SetValue(connectIP);
+                                    break;
+                                case "":
+                                    settingsRunning = false;
+                                    break;
+                            }
+                        }
                         break;
                     case "Rules":
                         Console.WriteLine("Rules of Mangala(Turkish version of mancala)");

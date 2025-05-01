@@ -8,6 +8,7 @@ namespace ConsoleMenu
     {
         public abstract void NextValue();
         public abstract void PreviousValue();
+        public abstract void SetValue(object value);
     }
 
     public class StringOption: SettingOption
@@ -31,6 +32,32 @@ namespace ConsoleMenu
         {
             return Options[ValueIndex];
         }
+
+        public override void SetValue(object value){}
+    }
+    public class StringSetValue: SettingOption
+    {
+        private string Value;
+        public StringSetValue(string value)
+        {
+            Value = value;
+        }
+        public override void NextValue()
+        {
+
+        }
+        public override void PreviousValue()
+        {
+
+        }
+        public override string ToString()
+        {
+            return Value;
+        }
+        public override void SetValue(object value)
+        {
+            Value = Convert.ToString(value) ?? "";
+        }
     }
     public class BoolOption: SettingOption
     {
@@ -51,6 +78,7 @@ namespace ConsoleMenu
         {
             return Value.ToString();
         }
+        public override void SetValue(object value){}
     }
     public class IntOption: SettingOption
     {
@@ -74,6 +102,7 @@ namespace ConsoleMenu
         {
             return Value.ToString();
         }
+        public override void SetValue(object value){}
     }
     public class DoubleOption: SettingOption
     {
@@ -97,6 +126,7 @@ namespace ConsoleMenu
         {
             return Value.ToString();
         }
+        public override void SetValue(object value){}
     }
     public class ColorOption: SettingOption
     {
@@ -155,6 +185,7 @@ namespace ConsoleMenu
                     return "";   
             }
         }
+        public override void SetValue(object value){}
         public int GetColor()
         {
             return Colors[ColorIndex];

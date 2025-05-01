@@ -24,6 +24,7 @@ public class WebGameClient
     private int[] board = new int[15];
     private List<int[]> history = new List<int[]>();
     private List<int> movesHistory = new List<int>();
+    private string[] _avaliableGames;
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     private TaskCompletionSource<bool> _gameEnded;
     private readonly SemaphoreSlim _drawLock = new(1, 1);
@@ -54,11 +55,8 @@ public class WebGameClient
         _showZeros = settings["Show zeros"].ToString() == "True";
         consoleColor = (ConsoleColor)((ColorOption)settings["Default color"]).GetColor();
         selectColor = (ConsoleColor)((ColorOption)settings["Menu select color"]).GetColor();
-        string[] options = new string[3] {"Quick game", "Join game", "Create game"};
-
-        Console.WriteLine("Enter server URL (default: "+GetLocalIPv4Address("5214")+"):" );
-        var url = Console.ReadLine();
-        if (string.IsNullOrWhiteSpace(url)) url = GetLocalIPv4Address("5214");
+        string[] options = new string[4] {"Quick game", "Public games list", "Join game", "Create game"};
+        var url = settings["Connect ip"];
 
         _connection = new HubConnectionBuilder()
             .WithUrl($"{url}/game")
@@ -69,18 +67,41 @@ public class WebGameClient
         try
         {
             await _connection.StartAsync();
-            string choice = Menu.MenuShow(Menu.Paginate(options, 3), 0, "", selectColor, consoleColor);
+            string choice = Menu.MenuShow(Menu.Paginate(options, options.Length), 0, "", selectColor, consoleColor);
             switch(choice)
             {
                 case "Quick game":
                     await _connection.InvokeAsync("QuickGame");
+                    break;
+                case "Public games list":
+                    _waitingForResult = true;
+                    await _connection.InvokeAsync("ListPublicGames");
+                    while(_waitingForResult) await Task.Delay(50);
+                    if(_avaliableGames.Length == 1 && _avaliableGames[0] == "") return;
+                    do {
+                        _sessionId = Menu.MenuShow(Menu.Paginate(_avaliableGames, 8), 0, "", selectColor, consoleColor);
+                        Console.WriteLine("Trying to connect to game...");
+                        _waitingForResult = true;
+                        await _connection.InvokeAsync("ListPublicGames");
+                        while(_waitingForResult) await Task.Delay(50);
+                        if(_avaliableGames.Length == 1 && _avaliableGames[0] == "") return;
+                        if(!_avaliableGames.Contains(_sessionId))
+                        {
+                            Console.WriteLine("\x1b[3J");
+                            Console.Clear();
+                            Console.WriteLine("Can't connect to game: game is full");
+                            Console.WriteLine("Press any key to return to games list");
+                            Console.ReadKey();
+                        }
+                    }
+                    while(!_avaliableGames.Contains(_sessionId));
+                    await _connection.InvokeAsync("JoinGame", _sessionId);
                     break;
                 case "Join game":
                     Console.WriteLine("\x1b[3J");
                     Console.Clear();
                     Console.WriteLine("Enter Game ID to join:");
                     _sessionId = Console.ReadLine() ?? "";
-
                     await _connection.InvokeAsync("JoinGame", _sessionId);
                     break;
                 case "Create game":
@@ -195,6 +216,12 @@ public class WebGameClient
 
     private void RegisterHandlers()
     {
+        _connection.On<string>("AvaliableGames", (avaliableGameList) => 
+        {
+            _avaliableGames = avaliableGameList.Split(",");
+            _waitingForResult = false;
+        });
+
         _connection.On<string>("sessionID", (sessionId) => 
         {
             _sessionId = _sessionId == "" ? sessionId : _sessionId;
@@ -263,8 +290,12 @@ public class WebGameClient
         {
             if(msg == "Game full") 
             {
-                Console.WriteLine($"Error: {msg}");
+                Console.WriteLine("Error: "+msg);
                 _gameEnded.TrySetResult(true);
+            }
+            if(msg == "Game with that id already exists")
+            {
+                Console.WriteLine("Error: "+msg);
             }
         });
     }
