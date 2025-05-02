@@ -131,6 +131,8 @@ public class WebGameClient
                     }
                     await _connection.InvokeAsync("CreateGame", newSessionId, publicGame.ToString());
                     break;
+                case "":
+                    return;
             }
         }
         catch (Exception ex)
@@ -236,7 +238,7 @@ public class WebGameClient
         {
             Console.WriteLine("\x1b[3J");
             Console.Clear();
-            Console.WriteLine("Created game with id:\n"+_sessionId);
+            Console.WriteLine("Created game with id:\n"+sessionId);
             Console.WriteLine("Share it to your opponent");
             Console.WriteLine("Waiting for opponent...");
         });
