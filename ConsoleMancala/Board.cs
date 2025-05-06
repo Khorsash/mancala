@@ -252,7 +252,9 @@ namespace ConsoleMancala
         }
         public static async Task AnimateMove(int[] board, int showFromPerspective,
                                               int move, int showMoveTime,
-                                               bool debug=false, bool showZeros=false)
+                                               bool debug=false, bool showZeros=false,
+                                               string? ownNick="", string? opponentsNick="",
+                                               string? spaceBeforeOwnNick="")
         {
             int[] bc = board.ToArray();
             int pitsCount = (bc.Length-3)/2;
@@ -264,12 +266,16 @@ namespace ConsoleMancala
                 bc[move] = -1;
                 Console.WriteLine("\x1b[3J");
                 Console.Clear();
+                Console.WriteLine(opponentsNick);
                 ShowBoard(bc, showFromPerspective, move, debug, true, showZeros);
+                Console.WriteLine(spaceBeforeOwnNick+ownNick);
                 await Task.Delay(showMoveTime);
                 bc[move] = 0;
                 Console.WriteLine("\x1b[3J");
                 Console.Clear();
+                Console.WriteLine(opponentsNick ?? "Anonymous");
                 ShowBoard(bc, showFromPerspective, (move+1)%(bc.Length-1), debug, true, showZeros);
+                Console.WriteLine(spaceBeforeOwnNick+ownNick);
                 await Task.Delay(showMoveTime);
                 currentIndex = move+1;
             }
@@ -291,7 +297,9 @@ namespace ConsoleMancala
                         Console.Write("Current index: ");
                         Console.WriteLine(currentIndex);
                     }
+                    Console.WriteLine(opponentsNick);
                     ShowBoard(bc, showFromPerspective, currentIndex, debug, true, showZeros);
+                    Console.WriteLine(spaceBeforeOwnNick+ownNick);
                     await Task.Delay(showMoveTime);
                     bc[currentIndex]++;
                     piecesCount--;
@@ -306,7 +314,9 @@ namespace ConsoleMancala
                 bc[12-currentIndex] -= 1;
                 Console.WriteLine("\x1b[3J");
                 Console.Clear();
+                Console.WriteLine(opponentsNick);
                 ShowBoard(bc, showFromPerspective, 12-currentIndex, debug, true, showZeros);
+                Console.WriteLine(spaceBeforeOwnNick+ownNick);
                 await Task.Delay(showMoveTime);
             }
             if((turn == 1 ? currentIndex>6&&currentIndex<13 : currentIndex<6) 
@@ -315,7 +325,9 @@ namespace ConsoleMancala
                 bc[currentIndex] -= 1;
                 Console.WriteLine("\x1b[3J");
                 Console.Clear();
+                Console.WriteLine(opponentsNick);
                 ShowBoard(bc, showFromPerspective, currentIndex, debug, true, showZeros);
+                Console.WriteLine(spaceBeforeOwnNick+ownNick);
                 await Task.Delay(showMoveTime);
             }
         }

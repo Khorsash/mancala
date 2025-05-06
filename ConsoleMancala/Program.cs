@@ -197,7 +197,7 @@ namespace ConsoleMancala
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             string[] MenuOptions = new string[5] {"New Hot seat game", "New online game", "Rules", "Settings", "Exit"};
-            string[] SettingCatgs = new string[2] {"Main Settings", "Change connect ip"};
+            string[] SettingCatgs = new string[3] {"Main Settings", "Change connect ip", "Change nickname"};
 
             Dictionary<string, SettingOption> settings = new Dictionary<string, SettingOption>();
             int[] menuSelectColors = new int[15];
@@ -209,6 +209,7 @@ namespace ConsoleMancala
             settings["Settings select color"] = new ColorOption(menuSelectColors, 13);
             settings["Show opponent's turn time(in ms)"] = new IntOption(300, 50);
             settings["Connect ip"] = new StringSetValue(WebGameClient.GetLocalIPv4Address("5214"));
+            settings["Nickname"] = new StringSetValue("Anonymous");
 
             bool Running = true;
             while(Running)
@@ -241,10 +242,17 @@ namespace ConsoleMancala
                                     break;
                                 case "Change connect ip":
                                     ClearConsole();
-                                    Console.WriteLine("Enter server URL (now is: "+settings["Connect ip"].ToString()+"):" );
+                                    Console.WriteLine("Enter server URL (now is: "+settings["Connect ip"].ToString()+"):");
                                     string connectIP = Console.ReadLine() ?? WebGameClient.GetLocalIPv4Address("5214");
                                     connectIP = connectIP == "" ? WebGameClient.GetLocalIPv4Address("5214") : connectIP;
                                     settings["Connect ip"].SetValue(connectIP);
+                                    break;
+                                case "Change nickname":
+                                    ClearConsole();
+                                    Console.WriteLine("Enter new nickname (now is: "+settings["Nickname"].ToString()+"):");
+                                    string nickname = Console.ReadLine() ?? "Anonymous";
+                                    nickname = nickname == "" ? "Anonymous" : nickname;
+                                    settings["Nickname"].SetValue(nickname);
                                     break;
                                 case "":
                                     settingsRunning = false;

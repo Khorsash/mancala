@@ -32,6 +32,9 @@ public class WebGameClient
     private bool _waitingForResult;
     private ConsoleColor consoleColor;
     private ConsoleColor selectColor;
+    private string? OwnNick;
+    private string? OpponentsNick;
+    private string? SpaceBeforeOwnNick;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -47,6 +50,7 @@ public class WebGameClient
         _gameEnded = new TaskCompletionSource<bool>();
         board = new int[15];
         history = new List<int[]>();
+        movesHistory = new List<int>();
         _gameStarted = false;
         _waitingForResult = false;
         _showMoveTime = Convert.ToInt16(settings["Show opponent's turn time(in ms)"].ToString());
@@ -56,6 +60,7 @@ public class WebGameClient
         consoleColor = (ConsoleColor)((ColorOption)settings["Default color"]).GetColor();
         selectColor = (ConsoleColor)((ColorOption)settings["Menu select color"]).GetColor();
         string[] options = new string[4] {"Quick game", "Public games list", "Join game", "Create game"};
+        string nick = settings["Nickname"].ToString() ?? "Anonymous";
         var url = settings["Connect ip"];
 
         _connection = new HubConnectionBuilder()
@@ -71,7 +76,7 @@ public class WebGameClient
             switch(choice)
             {
                 case "Quick game":
-                    await _connection.InvokeAsync("QuickGame");
+                    await _connection.InvokeAsync("QuickGame", nick);
                     break;
                 case "Public games list":
                     _waitingForResult = true;
@@ -95,14 +100,14 @@ public class WebGameClient
                         }
                     }
                     while(!_avaliableGames.Contains(_sessionId));
-                    await _connection.InvokeAsync("JoinGame", _sessionId);
+                    await _connection.InvokeAsync("JoinGame", _sessionId, nick);
                     break;
                 case "Join game":
                     Console.WriteLine("\x1b[3J");
                     Console.Clear();
                     Console.WriteLine("Enter Game ID to join:");
                     _sessionId = Console.ReadLine() ?? "";
-                    await _connection.InvokeAsync("JoinGame", _sessionId);
+                    await _connection.InvokeAsync("JoinGame", _sessionId, nick);
                     break;
                 case "Create game":
                     Console.WriteLine("Enter your game id(or leave blank so it will be generated):");
@@ -129,7 +134,7 @@ public class WebGameClient
                                 break;
                         }
                     }
-                    await _connection.InvokeAsync("CreateGame", newSessionId, publicGame.ToString());
+                    await _connection.InvokeAsync("CreateGame", newSessionId, publicGame.ToString(), nick);
                     break;
                 case "":
                     return;
@@ -162,7 +167,9 @@ public class WebGameClient
                         boardStateIndex = history.Count-1;
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
+                        Console.WriteLine(OpponentsNick);
                         Board.ShowBoard(history[boardStateIndex], _role, -1, false, false, _showZeros);
+                        Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
                         if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                         else Console.WriteLine("Draw.");
                         break;
@@ -172,7 +179,9 @@ public class WebGameClient
                         boardStateIndex = 0;
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
+                        Console.WriteLine(OpponentsNick);
                         Board.ShowBoard(history[boardStateIndex], _role, movesHistory[boardStateIndex], false, false, _showZeros);
+                        Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
                         if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                         else Console.WriteLine("Draw.");
                         break;
@@ -181,7 +190,9 @@ public class WebGameClient
                     boardStateIndex++;
                     Console.WriteLine("\x1b[3J");
                     Console.Clear();
+                    Console.WriteLine(OpponentsNick);
                     Board.ShowBoard(history[boardStateIndex], _role, movesHistory[boardStateIndex], false, false, _showZeros);
+                    Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
                     if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                     else Console.WriteLine("Draw.");
 
@@ -192,7 +203,9 @@ public class WebGameClient
                         boardStateIndex = history.Count-1;
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
+                        Console.WriteLine(OpponentsNick);
                         Board.ShowBoard(history[boardStateIndex], _role, -1, false, false, _showZeros);
+                        Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
                         if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                         else Console.WriteLine("Draw.");
                         break;
@@ -201,7 +214,9 @@ public class WebGameClient
                     boardStateIndex--;
                     Console.WriteLine("\x1b[3J");
                     Console.Clear();
+                    Console.WriteLine(OpponentsNick);
                     Board.ShowBoard(history[boardStateIndex], _role, movesHistory[boardStateIndex], false, false, _showZeros);
+                    Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
                     if (_winner != 3) Console.WriteLine(_winner == _role ? "You won!" : "You lost");
                     else Console.WriteLine("Draw.");
 
@@ -234,6 +249,23 @@ public class WebGameClient
             _role = Convert.ToInt16(role);
         });
 
+        _connection.On<string>("Nicknames", (nicknames) => 
+        {
+            if(_role == 1)
+            {
+                OwnNick = nicknames.Split(",")[0];
+                OpponentsNick = nicknames.Split(",")[1];
+            }
+            if(_role == 2)
+            {
+                OwnNick = nicknames.Split(",")[1];
+                OpponentsNick = nicknames.Split(",")[0];
+            }
+            SpaceBeforeOwnNick = "";
+            int nickLen = (OwnNick??"").Length == 0 ? 39 : (OwnNick??"").Length;
+            for(int i=0; i<39-nickLen; i++) SpaceBeforeOwnNick += " ";
+        });
+
         _connection.On<string>("WaitingForOpponent", (sessionId) =>
         {
             Console.WriteLine("\x1b[3J");
@@ -261,16 +293,20 @@ public class WebGameClient
                     {
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
+                        Console.WriteLine(OpponentsNick);
                         Board.ShowBoard(board, _role, previousMove, _debug, false, _showZeros);
+                        Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
                         await Task.Delay(_showMoveTime);
-                        await Board.AnimateMove(board, _role, previousMove, _showMoveTime, _debug, _showZeros);
+                        await Board.AnimateMove(board, _role, previousMove, _showMoveTime, _debug, _showZeros, OwnNick, OpponentsNick, SpaceBeforeOwnNick);
                     }
                 }
                 history.Add(bc);
                 board = bc.ToArray();
                 Console.WriteLine("\x1b[3J");
                 Console.Clear();
+                Console.WriteLine(OpponentsNick);
                 Board.ShowBoard(board, _role, -1, _debug, false, _showZeros);
+                Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
                 _canMove = board[board.Length-1] == _role;
                 Console.WriteLine(board[board.Length-1] == _role ? "It's Your turn" : "It's Opponent's turn");
                 _waitingForResult = _canMove;
@@ -317,7 +353,9 @@ public class WebGameClient
                 keyNotSelected = true;
                 Console.WriteLine("\x1b[3J");
                 Console.Clear();
+                Console.WriteLine(OpponentsNick);
                 Board.ShowBoard(board, _role, i, _debug, false, _showZeros);
+                Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
                 Console.WriteLine("It's Your turn");
                 while(keyNotSelected)
                 {
@@ -328,14 +366,18 @@ public class WebGameClient
                             Console.WriteLine("\x1b[3J");
                             Console.Clear();
                             i = turn == 1 ? (i == 5 ? 0 : i+1) : (i == 12 ? 7 : i+1);
+                            Console.WriteLine(OpponentsNick);
                             Board.ShowBoard(board, _role, i, _debug, false, _showZeros);
+                            Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
                             Console.WriteLine("It's Your turn");
                             break;
                         case ConsoleKey.LeftArrow: case ConsoleKey.A:
                             Console.WriteLine("\x1b[3J");
                             Console.Clear();
                             i = turn == 1 ? (i == 0 ? 5 : i-1) : (i == 7 ? 12 : i-1);
+                            Console.WriteLine(OpponentsNick);
                             Board.ShowBoard(board, _role, i, _debug, false, _showZeros);
+                            Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
                             Console.WriteLine("It's Your turn");
                             break;
                         case ConsoleKey.Enter:
@@ -357,7 +399,9 @@ public class WebGameClient
                     {
                         Console.WriteLine("\x1b[3J");
                         Console.Clear();
+                        Console.WriteLine(OpponentsNick);
                         Board.ShowBoard(board, _role, -1, _debug, false, _showZeros);
+                        Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
                         Console.Write("Waiting for opponent's turn");
                         for(int k=0; k<3; k++)
                         {
@@ -376,7 +420,9 @@ public class WebGameClient
         }
         Console.WriteLine("\x1b[3J");
         Console.Clear();
+        Console.WriteLine(OpponentsNick);
         Board.ShowBoard(board, _role, -1, _debug, false, _showZeros);
+        Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
         Console.WriteLine("Game Over: "+(_winner == _role ? "You won!" : "You lost"));
     }
     public static string GetLocalIPv4Address(string port)
