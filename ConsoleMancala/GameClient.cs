@@ -303,14 +303,17 @@ public class WebGameClient
                 history.Add(bc);
                 Console.WriteLine("\x1b[3J");
                 Console.Clear();
-                Console.WriteLine("board:");
-                Console.Write("{ ");
-                for(int i=0; i<board.Length; i++) Console.Write(Convert.ToString(board[i])+", ");
-                Console.Write(" }");
-                Console.WriteLine("bc received:");
-                Console.Write("{ ");
-                for(int i=0; i<bc.Length; i++) Console.Write(Convert.ToString(bc[i])+", ");
-                Console.Write(" }");
+                if(_debug)
+                {
+                    Console.WriteLine("board:");
+                    Console.Write("{ ");
+                    for(int i=0; i<board.Length; i++) Console.Write(Convert.ToString(board[i])+", ");
+                    Console.Write(" }");
+                    Console.WriteLine("bc received:");
+                    Console.Write("{ ");
+                    for(int i=0; i<bc.Length; i++) Console.Write(Convert.ToString(bc[i])+", ");
+                    Console.Write(" }");
+                }
                 board = bc.ToArray();
                 Console.WriteLine(OpponentsNick);
                 Board.ShowBoard(board, _role, -1, _debug, false, _showZeros);
@@ -330,6 +333,7 @@ public class WebGameClient
                 }
                 Console.WriteLine(board[board.Length-1] == _role ? "It's Your turn" : "It's Opponent's turn");
                 _waitingForResult = _canMove;
+                Console.ReadKey();
             }
             finally
             {
@@ -489,11 +493,11 @@ public class WebGameClient
                     return "http://"+ip.ToString()+":"+port;
                 }
             }
-            return "http://"+"127.0.0.1"+":"+port; // Fallback to loopback address
+            return "http://192.168.0.18"+":"+port; // Fallback to loopback address
         }
         catch
         {
-            return "http://"+"127.0.0.1"+":"+port; // Fallback to loopback address on error
+            return "http://192.168.0.18"+":"+port; // Fallback to loopback address on error
         }
     }
 }
