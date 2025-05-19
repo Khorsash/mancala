@@ -301,13 +301,33 @@ public class WebGameClient
                     }
                 }
                 history.Add(bc);
-                board = bc.ToArray();
                 Console.WriteLine("\x1b[3J");
                 Console.Clear();
+                Console.WriteLine("board:");
+                Console.Write("{ ");
+                for(int i=0; i<board.Length; i++) Console.Write(Convert.ToString(board[i])+", ");
+                Console.Write(" }");
+                Console.WriteLine("bc received:");
+                Console.Write("{ ");
+                for(int i=0; i<bc.Length; i++) Console.Write(Convert.ToString(bc[i])+", ");
+                Console.Write(" }");
+                board = bc.ToArray();
                 Console.WriteLine(OpponentsNick);
                 Board.ShowBoard(board, _role, -1, _debug, false, _showZeros);
                 Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
+                if(_debug) 
+                {
+                    Console.WriteLine("CanMove before change");
+                    Console.Write("canMove: "); 
+                    Console.WriteLine(_canMove);
+                }
                 _canMove = board[board.Length-1] == _role;
+                if(_debug) 
+                {
+                    Console.WriteLine("CanMove after change");
+                    Console.Write("canMove: "); 
+                    Console.WriteLine(_canMove);
+                }
                 Console.WriteLine(board[board.Length-1] == _role ? "It's Your turn" : "It's Opponent's turn");
                 _waitingForResult = _canMove;
             }
@@ -356,6 +376,12 @@ public class WebGameClient
                 Console.WriteLine(OpponentsNick);
                 Board.ShowBoard(board, _role, i, _debug, false, _showZeros);
                 Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
+                if(_debug) 
+                {
+                    Console.WriteLine("CanMove after change");
+                    Console.Write("canMove: "); 
+                    Console.WriteLine(_canMove);
+                }
                 Console.WriteLine("It's Your turn");
                 while(keyNotSelected)
                 {
@@ -369,6 +395,12 @@ public class WebGameClient
                             Console.WriteLine(OpponentsNick);
                             Board.ShowBoard(board, _role, i, _debug, false, _showZeros);
                             Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
+                            if(_debug) 
+                            {
+                                Console.WriteLine("CanMove after change");
+                                Console.Write("canMove: "); 
+                                Console.WriteLine(_canMove);
+                            }
                             Console.WriteLine("It's Your turn");
                             break;
                         case ConsoleKey.LeftArrow: case ConsoleKey.A:
@@ -378,6 +410,12 @@ public class WebGameClient
                             Console.WriteLine(OpponentsNick);
                             Board.ShowBoard(board, _role, i, _debug, false, _showZeros);
                             Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
+                            if(_debug) 
+                            {
+                                Console.WriteLine("CanMove after change");
+                                Console.Write("canMove: "); 
+                                Console.WriteLine(_canMove);
+                            }
                             Console.WriteLine("It's Your turn");
                             break;
                         case ConsoleKey.Enter:
@@ -402,6 +440,20 @@ public class WebGameClient
                         Console.WriteLine(OpponentsNick);
                         Board.ShowBoard(board, _role, -1, _debug, false, _showZeros);
                         Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
+                        if(_debug) 
+                        {
+                            Console.WriteLine("CanMove after change");
+                            Console.Write("canMove: "); 
+                            Console.WriteLine(_canMove);
+                            Console.Write("_waitingForResult");
+                            Console.WriteLine(_waitingForResult);
+                            Console.Write("_waitingForResult");
+                            Console.WriteLine(_waitingForResult);
+                            Console.WriteLine("board:");
+                            Console.Write("{ ");
+                            for(int ik=0; ik<board.Length; ik++) Console.Write(Convert.ToString(board[ik])+", ");
+                            Console.Write(" }");
+                        }
                         Console.Write("Waiting for opponent's turn");
                         for(int k=0; k<3; k++)
                         {
