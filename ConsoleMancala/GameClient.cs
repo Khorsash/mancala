@@ -307,6 +307,7 @@ public class WebGameClient
                 Console.WriteLine(OpponentsNick);
                 Board.ShowBoard(board, _role, -1, _debug, false, _showZeros);
                 Console.WriteLine(SpaceBeforeOwnNick+OwnNick);
+                Console.WriteLine("state: {"+state+"}");
                 Console.Write("Turn: ");
                 Console.WriteLine(board[board.Length-1]);
                 Console.Write("Role: ");
@@ -314,7 +315,7 @@ public class WebGameClient
                 Console.Write("{ ");
                 for(int j=0; j<board.Length; j++) Console.Write(Convert.ToString(board[j])+", ");
                 Console.Write(" }");
-                _canMove = board[board.Length-1] == _role;
+                _canMove = bc[board.Length-1] == _role;
                 Console.WriteLine(_canMove ? "It's Your turn" : "It's Opponent's turn");
                 _waitingForResult = _canMove;
             }
