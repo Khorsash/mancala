@@ -311,6 +311,9 @@ public class WebGameClient
                 Console.WriteLine(board[board.Length-1]);
                 Console.Write("Role: ");
                 Console.WriteLine(_role);
+                Console.Write("{ ");
+                for(int j=0; j<board.Length; j++) Console.Write(Convert.ToString(board[j])+", ");
+                Console.Write(" }");
                 _canMove = board[board.Length-1] == _role;
                 Console.WriteLine(_canMove ? "It's Your turn" : "It's Opponent's turn");
                 _waitingForResult = _canMove;
@@ -364,6 +367,9 @@ public class WebGameClient
                 Console.WriteLine(board[board.Length-1]);
                 Console.Write("Role: ");
                 Console.WriteLine(_role);
+                Console.Write("{ ");
+                for(int j=0; j<board.Length; j++) Console.Write(Convert.ToString(board[j])+", ");
+                Console.Write(" }");
                 Console.WriteLine("It's Your turn");
                 while(keyNotSelected)
                 {
@@ -381,6 +387,9 @@ public class WebGameClient
                             Console.WriteLine(board[board.Length-1]);
                             Console.Write("Role: ");
                             Console.WriteLine(_role);
+                            Console.Write("{ ");
+                            for(int j=0; j<board.Length; j++) Console.Write(Convert.ToString(board[j])+", ");
+                            Console.Write(" }");
                             Console.WriteLine("It's Your turn");
                             break;
                         case ConsoleKey.LeftArrow: case ConsoleKey.A:
@@ -394,6 +403,9 @@ public class WebGameClient
                             Console.WriteLine(board[board.Length-1]);
                             Console.Write("Role: ");
                             Console.WriteLine(_role);
+                            Console.Write("{ ");
+                            for(int j=0; j<board.Length; j++) Console.Write(Convert.ToString(board[j])+", ");
+                            Console.Write(" }");
                             Console.WriteLine("It's Your turn");
                             break;
                         case ConsoleKey.Enter:
